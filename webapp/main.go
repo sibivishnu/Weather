@@ -8,21 +8,21 @@ package main
 // Packages
 //----------------------------------------------
 import (
-	"../common/init"
-	"../common"
-	firebase "firebase.google.com/go"
-	"firebase.google.com/go/auth"
-	"github.com/urfave/cli"
-	"github.com/gorilla/mux"
-	"google.golang.org/api/option"
 	"log"
 	"net/http"
 	"os"
+
+	"../common"
+	firebase "firebase.google.com/go"
+	"firebase.google.com/go/auth"
+	"github.com/gorilla/mux"
+	"github.com/urfave/cli"
+	"google.golang.org/api/option"
 )
 
-//----------------------------------------------
+// ----------------------------------------------
 // Environment Variable Names
-//----------------------------------------------
+// ----------------------------------------------
 const (
 	ENV_ACCU_API_KEY          = "ACCU_API_KEY"
 	ENV_REDIS_HOST            = "REDIS_HOST"
@@ -32,13 +32,13 @@ const (
 	ENV_FIREBASE_SERVICE_FILE = "FIREBASE_APPLICATION_CREDENTIALS"
 )
 
-//----------------------------------------------
+// ----------------------------------------------
 // Global Variables
-//----------------------------------------------
+// ----------------------------------------------
 var (
-	options map[string]interface{}
-	httpHost    string
-	httpScheme  string
+	options        map[string]interface{}
+	httpHost       string
+	httpScheme     string
 	firebaseClient *auth.Client
 )
 
@@ -46,9 +46,9 @@ var (
 // Functions
 //==============================================
 
-//----------------------------------------------
+// ----------------------------------------------
 // setupHTTP - prepare http routes.
-//----------------------------------------------
+// ----------------------------------------------
 func setupHTTP(port string) {
 	log.Println("[WebApp] Starting the http server on port : " + port)
 	router := mux.NewRouter()
@@ -60,8 +60,6 @@ func setupHTTP(port string) {
 
 	router.HandleFunc("/api/v2.3/forecast/id/{id}/hourly", actionGetHourlyForecastDataJson).Methods("GET")
 	router.HandleFunc("/api/v2.3/forecast/id/{id}/daily", actionGetDailyForecastDataJson).Methods("GET")
-
-
 
 	// Test Data Calls
 	router.HandleFunc("/api/v2.0/forecast/test/id/{id}", actionGetTestForecastData).Methods("GET")
@@ -87,9 +85,9 @@ func setupHTTP(port string) {
 	http.ListenAndServe(":"+port, router)
 }
 
-//----------------------------------------------
+// ----------------------------------------------
 // main - main program entry point
-//----------------------------------------------
+// ----------------------------------------------
 func main() {
 	app := cli.NewApp()
 	app.Name = "Weather Service"
@@ -106,9 +104,9 @@ func main() {
 	app.Run(os.Args)
 }
 
-//----------------------------------------------
+// ----------------------------------------------
 // runIt - Application Action
-//----------------------------------------------
+// ----------------------------------------------
 func runIt(runtimeContext *cli.Context) {
 	log.Println("[WebApp] begin")
 
