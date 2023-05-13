@@ -1,0 +1,26 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: cacheupdater
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: cacheupdater
+    spec:
+      containers:
+      - name: cacheupdater
+        image: gcr.io/lax-gateway/cacheupdater
+        imagePullPolicy: Always
+        env:
+           - name: ACCU_API_KEY
+             valueFrom:
+                configMapKeyRef:
+                  name: config-configmap
+                  key: app.accu-key
+           - name: HTTP_HOST
+             valueFrom:
+                configMapKeyRef:
+                  key: app.http-host
+                  name: config-configmap

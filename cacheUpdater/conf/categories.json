@@ -1,0 +1,73 @@
+[
+	{
+		"category": "1",
+		"ranges": [
+			{
+				"min":"280001",
+				"max":"280865"
+			},
+			{
+				"min":"280866",
+				"max":"2B3DE2"
+			},
+			{
+				"min":"2E92D1",
+				"max":"2EC4D0"
+			},
+			{
+				"min":"20E688",
+				"max":"27FEE0"
+			},
+			{
+				"min":"2ED584",
+				"max":"2EE17C"
+			},
+			{
+				"min":"2EF132",
+				"max":"2FFFFF"
+			}
+		]
+	},
+	{
+		"category": "2",
+		"ranges": [
+			{
+				"min":"2CF269",
+				"max":"2CF2CC"
+			},
+			{
+                                "min":"600001",
+                                "max":"630D40"
+                        },
+			{
+                                "min":"63CCA9",
+                                "max":"67FFFF"
+                        }
+		]
+	},
+	{
+		"category": "3",
+		"ranges": [
+			{
+				"min":"2EC4D1",
+				"max":"2ED583"
+			},
+			{
+				"min":"2EE17D",
+				"max":"2EF131"
+			},
+			{
+				"min":"2CF2CD",
+				"max":"2E92D0"
+			},
+                        {
+                                "min":"630D41",
+                                "max":"63CCA8"
+                        },
+                        {
+                                "min":"780001",
+                                "max":"7FFFFF"
+                        }
+		]
+	}
+]

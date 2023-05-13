@@ -1,0 +1,56 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: cacheupdater
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: cacheupdater
+    spec:
+      containers:
+      - name: cacheupdater
+        image: gcr.io/lax-gateway/cacheupdater
+        imagePullPolicy: Always
+        env:
+           - name: ACCU_API_KEY
+             valueFrom:
+                configMapKeyRef:
+                  name: config-configmap
+                  key: app.accu-key
+           - name: HTTP_HOST
+             valueFrom:
+                configMapKeyRef:
+                  key: app.http-host
+                  name: config-configmap
+           - name: HTTP_SCHEME
+             valueFrom:
+                configMapKeyRef:
+                  key: app.http-scheme
+                  name: config-configmap
+           - name: GOOGLE_APPLICATION_CREDENTIALS
+             valueFrom:
+                configMapKeyRef:
+                  key: app.gcp-creds
+                  name: config-configmap
+           - name: REDIS_HOST
+             valueFrom:
+                configMapKeyRef:
+                  name: config-configmap
+                  key: app.redis-host
+          - name: ACCU_API_KEY
+            valueFrom:
+               configMapKeyRef:
+                 key: app.accu-key
+                 name: config-configmap
+          - name: HTTP_HOST
+            valueFrom:
+               configMapKeyRef:
+                 key: app.http-host
+                 name: config-configmap
+          - name: HTTP_SCHEME
+            valueFrom:
+               configMapKeyRef:
+                 key: app.http-scheme
+                 name: config-configmap

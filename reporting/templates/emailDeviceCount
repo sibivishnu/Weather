@@ -1,0 +1,4 @@
+Device count : {{.TotalCount}} <br />
+Category 1 : {{.Cat1Count}} <br />
+Category 2 : {{.Cat2Count}} <br />
+Category 3 : {{.Cat3Count}}

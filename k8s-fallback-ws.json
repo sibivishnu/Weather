@@ -1,0 +1,19 @@
+{
+  "name": "k8s-fallback-ws",
+  "script": "k8s-fallback-ws",
+  "interpreter": "bash",
+  "interpreter_args": "-c",
+  "args": [
+    "source ./.env && ./k8s-fallback-ws --HTTP_PORT=$HTTP_PORT"
+  ],
+  "env": {
+    "HTTP_PORT": "32188"
+  },
+  "watch": true,
+  "restart": {
+    "restartable": "on-failure",
+    "max_restarts": 100,
+    "backoff": 1000,
+    "backoff_factor": 1.5
+  }
+}
