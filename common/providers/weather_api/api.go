@@ -8,13 +8,11 @@ package weather_api
 // Imports
 //==============================================
 import (
-	//cache "../cache"
-	"../.."
-	"../../const/device"
-	"../../nws"
 	"bytes"
 	"encoding/json"
 	"errors"
+	"github.com/sibivishnu/Weather/common/const/device"
+	"github.com/sibivishnu/Weather/common/nws"
 	"gopkg.in/guregu/null.v3"
 	"html/template"
 	"io/ioutil"
@@ -32,7 +30,6 @@ import (
 // Globals
 //================================================================
 //================================================================
-
 
 //==============================================
 // Globals - Tables
@@ -115,7 +112,6 @@ type (
 		NextOffsetChange string
 	}
 
-
 	//==============================================
 	// Legacy Forecast
 	//==============================================
@@ -131,8 +127,8 @@ type (
 		LocalDate string
 		DayInfo   string
 		HourRange string
-		Iso8601 string
-		DateTime time.Time
+		Iso8601   string
+		DateTime  time.Time
 	}
 
 	//----------------------------------------------
@@ -291,7 +287,7 @@ type (
 		Accu1d        *DailyForecast
 		Headline      *AccuHeadline
 		DailyForecast *AccuDailyForecast
-		FlowControl    int
+		FlowControl   int
 	}
 
 	//----------------------------------------------
@@ -308,7 +304,7 @@ type (
 		Headline        *AccuHeadline
 		DailyForecast   *AccuDailyForecast
 		CurrentForecast *AccuCurrentForecastResponse
-		FlowControl int
+		FlowControl     int
 	}
 
 	//----------------------------------------------
@@ -318,15 +314,15 @@ type (
 	 * @brief
 	 */
 	AccuTemplateCat3Struct struct {
-		DateStr       string
-		TimeStr       string
+		DateStr string
+		TimeStr string
 		// Time Forecast was obtained and cached.
 		ForecastTime  string
 		GmtOffset     float64
 		DailyForecast *AccuDailyForecast
 		Accu7d        *[]AccuDailyForecast
 		Accu24h       *[]AccuHourlyForecastResponse
-		FlowControl int
+		FlowControl   int
 	}
 
 	//----------------------------------------------
@@ -417,8 +413,6 @@ type (
 		UnitType   int
 	}
 
-
-
 	//----------------------------------------------
 	//
 	//----------------------------------------------
@@ -468,7 +462,7 @@ type (
 	 * @brief
 	 */
 	NullableAccuHourlyForecast struct {
-		DateTime                 null.String
+		DateTime null.String
 		//DateStr                  null.String
 		//TimeStr                  null.String
 		//MinTemp                  null.Float
@@ -499,9 +493,6 @@ type (
 		CloudCover               null.Int
 	}
 
-
-
-
 	//----------------------------------------------
 	//
 	//----------------------------------------------
@@ -518,7 +509,6 @@ type (
 		TornadoProbability       null.Int
 		HailProbability          null.Int
 	}
-
 
 	//----------------------------------------------
 	//
@@ -569,7 +559,6 @@ type (
 		Unit       null.String
 		UnitType   null.Int
 	}
-
 
 	//----------------------------------------------
 	//
@@ -647,10 +636,9 @@ type (
 	 */
 	NullableDailyForecast struct {
 		Headline       NullableAccuHeadline
-		Today 		   *NullableDayNightData
+		Today          *NullableDayNightData
 		DailyForecasts []NullableAccuDailyForecast
 	}
-
 
 	//----------------------------------------------
 	//
@@ -659,22 +647,20 @@ type (
 	 * @brief
 	 */
 	NullableUniversalForecast struct {
-		Date null.String
-		Time null.String
-		Category null.Int
-		GmtOffset null.Float
-		ForecastTime null.String
-		Headline       *NullableAccuHeadline
-		Today *NullableDayNightData
-		Current *NullableAccuCurrentForecastResponse
-		Daily *[]NullableAccuDailyForecast
-		Hourly *[]NullableAccuHourlyForecast
-		NWSForecast     map[string]string
-		FlowControl	null.Int
+		Date               null.String
+		Time               null.String
+		Category           null.Int
+		GmtOffset          null.Float
+		ForecastTime       null.String
+		Headline           *NullableAccuHeadline
+		Today              *NullableDayNightData
+		Current            *NullableAccuCurrentForecastResponse
+		Daily              *[]NullableAccuDailyForecast
+		Hourly             *[]NullableAccuHourlyForecast
+		NWSForecast        map[string]string
+		FlowControl        null.Int
 		ExtendedDeviceInfo device.ExtendedDeviceInfo
 	}
-
-
 
 	//----------------------------------------------
 	//
@@ -705,20 +691,19 @@ type (
 	 * @brief
 	 */
 	NullableUniversalForecastFormatV1p3 struct {
-		Date null.String // ymd in gateway locale
-		Time null.String // hms in gateway locale
-		GmtOffset null.Float // offset in gateway locale
+		Date         null.String // ymd in gateway locale
+		Time         null.String // hms in gateway locale
+		GmtOffset    null.Float  // offset in gateway locale
 		ForecastTime null.String // ymd hms in gateway locale time (time forecast was fetched from accuweather)
-		Category null.Int
-		FlowControl null.Int
+		Category     null.Int
+		FlowControl  null.Int
 		//Headline       *NullableAccuHeadline
-		Today ApiResponseInterface
-		Current ApiResponseInterface
-		Daily []ApiResponseInterface
-		Hourly []ApiResponseInterface
-		NWSForecast     map[string]string
+		Today       ApiResponseInterface
+		Current     ApiResponseInterface
+		Daily       []ApiResponseInterface
+		Hourly      []ApiResponseInterface
+		NWSForecast map[string]string
 	}
-
 
 	//----------------------------------------------
 	//
@@ -727,20 +712,20 @@ type (
 	 * @brief
 	 */
 	NullableUniversalForecastFormatV1p2 struct {
-		Date null.String
-		Time null.String
-		GmtOffset null.Float
+		Date         null.String
+		Time         null.String
+		GmtOffset    null.Float
 		ForecastTime null.String
-		Category null.Int
-		FlowControl null.Int
+		Category     null.Int
+		FlowControl  null.Int
 		//Headline       *NullableAccuHeadline
-		Today ApiResponseInterface
+		Today   ApiResponseInterface
 		Current ApiResponseInterface
-		Daily []ApiResponseInterface
-		Hourly []ApiResponseInterface
+		Daily   []ApiResponseInterface
+		Hourly  []ApiResponseInterface
 		//Daily *[]NullableAccuDailyForecast
 		//Hourly *[]NullableAccuHourlyForecast
-		NWSForecast     map[string]string
+		NWSForecast map[string]string
 	}
 
 	//----------------------------------------------
@@ -766,7 +751,6 @@ type (
 		Night                    NullableDayNightData
 		//Actual                   *NullableDayNightData // Todo deprecated
 	}
-
 
 	//----------------------------------------------
 	//
@@ -797,8 +781,6 @@ type (
 		Ice                      NullableReading
 	}
 
-
-
 	//----------------------------------------------
 	//
 	//----------------------------------------------
@@ -806,35 +788,35 @@ type (
 	 * @brief
 	 */
 	NullableAccuDailyForecastFormatV1p3 struct {
-		Date                     null.String `json:"D"`
-		EpochDate                null.Int `json:"U"`
-		MoonPhase                null.Int `json:"MP"`
-		SunRise                  null.String `json:"Sr"`
-		SunSet					 null.String `json:"Ss"`
-		MoonRise                 null.String `json:"Mr"`
-		MoonSet                  null.String `json:"Ms"`
+		Date      null.String `json:"D"`
+		EpochDate null.Int    `json:"U"`
+		MoonPhase null.Int    `json:"MP"`
+		SunRise   null.String `json:"Sr"`
+		SunSet    null.String `json:"Ss"`
+		MoonRise  null.String `json:"Mr"`
+		MoonSet   null.String `json:"Ms"`
 
-		MinTemperature           null.Float `json:"Tl"`
-		MaxTemperature           null.Float `json:"Th"`
+		MinTemperature null.Float `json:"Tl"`
+		MaxTemperature null.Float `json:"Th"`
 		//MinRealFeelTemperature   null.Float `json:"Fl"`
 		//MaxRealFeelTemperature   null.Float `json:"Fh"`
 		//MinRealFeelTemperatureShade null.Float `json:"FSl"`
 		//MaxRealFeelTemperatureShade null.Float `json:"FSh"`
-		HoursOfSun               null.Float `json:"HoS"`
+		HoursOfSun null.Float `json:"HoS"`
 		//DaySummaryHeating        null.Float `json:"DsH"`
 		//DaySummaryCooling        null.Float `json:"DsC"`
 
 		// AirAndPollen
-		UVIndex          		 null.Int `json:"UVi"`
-		UVCategory				 null.Int `json:"UVc"`
-		AirQualityCategory       null.Int `json:"AQc"`
-		GrassCategory            null.Int `json:"Gc"`
-		MoldCategory             null.Int `json:"Mc"`
-		RagweedCategory          null.Int `json:"Rc"`
-		TreeCategory             null.Int `json:"Tc"`
+		UVIndex            null.Int `json:"UVi"`
+		UVCategory         null.Int `json:"UVc"`
+		AirQualityCategory null.Int `json:"AQc"`
+		GrassCategory      null.Int `json:"Gc"`
+		MoldCategory       null.Int `json:"Mc"`
+		RagweedCategory    null.Int `json:"Rc"`
+		TreeCategory       null.Int `json:"Tc"`
 
-		Day                      ApiResponseInterface
-		Night                    ApiResponseInterface
+		Day   ApiResponseInterface
+		Night ApiResponseInterface
 	}
 
 	//----------------------------------------------
@@ -844,21 +826,21 @@ type (
 	 * @brief
 	 */
 	NullableAccuHourlyForecastFormatV1p3 struct {
-		DateTime                 null.String `json:"DT"`
+		DateTime null.String `json:"DT"`
 		//DateStr                  null.String
 		//TimeStr                  null.String
 		//MinTemp                  null.Float
 		//MaxTemp                  null.Float
-		EpochDateTime            null.Int `json:"U"`
-		WeatherIcon              null.Int `json:"WX"`
-		IsDaylight               null.Bool `json:"isDL"`
-		Temperature              null.Float `json:"T"`
+		EpochDateTime null.Int   `json:"U"`
+		WeatherIcon   null.Int   `json:"WX"`
+		IsDaylight    null.Bool  `json:"isDL"`
+		Temperature   null.Float `json:"T"`
 		//RealFeelTemperature      null.Float `json:"F"`
 		//WetBulbTemperature       null.Float `json:"WB"`
 		//DewPoint                 null.Float `json:"DP"`
-		WindSpeed                null.Float `json:"WS"`
-		WindHeading              null.Int `json:"WH"`
-		WindGust                 null.Float `json:"GS"`
+		WindSpeed   null.Float `json:"WS"`
+		WindHeading null.Int   `json:"WH"`
+		WindGust    null.Float `json:"GS"`
 		//WindGustHeading          null.Int `json:"GH"`
 		//RelativeHumidity         null.Int `json:"RHu"`
 		//Visibility               null.Float `json:"V"`
@@ -875,11 +857,7 @@ type (
 		//Ice                      null.Float `json:"I"`
 		//CloudCover               null.Int `json:"CC"`
 
-
-
-
 	}
-
 
 	//----------------------------------------------
 	//
@@ -888,12 +866,12 @@ type (
 	 * @brief
 	 */
 	NullableAccuCurrentForecastResponseFormatV1p3 struct {
-		Epoch null.Int `json:"U"`
-		WeatherIcon null.Int `json:"WX"`
-		IsDayTime null.Bool `json:"isDT"`
-		Temperature null.Float `json:"T"`
-		TornadoProbability null.Int `json:"TNp"`
-		HailProbability null.Int `json:"Hp"`
+		Epoch              null.Int   `json:"U"`
+		WeatherIcon        null.Int   `json:"WX"`
+		IsDayTime          null.Bool  `json:"isDT"`
+		Temperature        null.Float `json:"T"`
+		TornadoProbability null.Int   `json:"TNp"`
+		HailProbability    null.Int   `json:"Hp"`
 	}
 
 	//----------------------------------------------
@@ -903,7 +881,7 @@ type (
 	 * @brief
 	 */
 	NullableDayNightDataFormatV1p3 struct {
-		Icon              null.Int `json:"WX"`
+		Icon                     null.Int `json:"WX"`
 		PrecipitationProbability null.Int `json:"Pp"`
 		ThunderstormProbability  null.Int `json:"Tp"`
 		RainProbability          null.Int `json:"Rp"`
@@ -913,17 +891,15 @@ type (
 		//HoursOfRain              null.Float `json:"Rh"`
 		//HoursOfSnow              null.Float `json:"Sh"`
 		//HoursOfIce               null.Float `json:"Ih"`
-		CloudCover               null.Int `json:"CC"`
-		WindSpeed				 null.Float `json:"WS"`
-		WindHeading              null.Int `json:"WH"`
-		WindGust                 null.Float `json:"GS"`
+		CloudCover  null.Int   `json:"CC"`
+		WindSpeed   null.Float `json:"WS"`
+		WindHeading null.Int   `json:"WH"`
+		WindGust    null.Float `json:"GS"`
 		//TotalLiquid              null.Float `json:"TLiq"`
-		Rain                     null.Float `json:"R"`
-		Snow                     null.Float `json:"S"`
-		Ice                      null.Float `json:"I"`
+		Rain null.Float `json:"R"`
+		Snow null.Float `json:"S"`
+		Ice  null.Float `json:"I"`
 	}
-
-
 
 	//----------------------------------------------
 	//
@@ -932,35 +908,35 @@ type (
 	 * @brief
 	 */
 	NullableAccuDailyForecastFormatV1p2 struct {
-		Date                     null.String `json:"D"`
-		EpochDate                null.Int `json:"U"`
-		MoonPhase                null.Int `json:"MP"`
-		SunRise                  null.String `json:"Sr"`
-		SunSet					 null.String `json:"Ss"`
-		MoonRise                 null.String `json:"Mr"`
-		MoonSet                  null.String `json:"Ms"`
+		Date      null.String `json:"D"`
+		EpochDate null.Int    `json:"U"`
+		MoonPhase null.Int    `json:"MP"`
+		SunRise   null.String `json:"Sr"`
+		SunSet    null.String `json:"Ss"`
+		MoonRise  null.String `json:"Mr"`
+		MoonSet   null.String `json:"Ms"`
 
-		MinTemperature           null.Float `json:"Tl"`
-		MaxTemperature           null.Float `json:"Th"`
-		MinRealFeelTemperature   null.Float `json:"Fl"`
-		MaxRealFeelTemperature   null.Float `json:"Fh"`
+		MinTemperature              null.Float `json:"Tl"`
+		MaxTemperature              null.Float `json:"Th"`
+		MinRealFeelTemperature      null.Float `json:"Fl"`
+		MaxRealFeelTemperature      null.Float `json:"Fh"`
 		MinRealFeelTemperatureShade null.Float `json:"FSl"`
 		MaxRealFeelTemperatureShade null.Float `json:"FSh"`
-		HoursOfSun               null.Float `json:"HoS"`
-		DaySummaryHeating        null.Float `json:"DsH"`
-		DaySummaryCooling        null.Float `json:"DsC"`
+		HoursOfSun                  null.Float `json:"HoS"`
+		DaySummaryHeating           null.Float `json:"DsH"`
+		DaySummaryCooling           null.Float `json:"DsC"`
 
 		// AirAndPollen
-		UVIndex          		 null.Int `json:"UVi"`
-		UVCategory				 null.Int `json:"UVc"`
-		AirQualityCategory       null.Int `json:"AQc"`
-		GrassCategory            null.Int `json:"Gc"`
-		MoldCategory             null.Int `json:"Mc"`
-		RagweedCategory          null.Int `json:"Rc"`
-		TreeCategory             null.Int `json:"Tc"`
+		UVIndex            null.Int `json:"UVi"`
+		UVCategory         null.Int `json:"UVc"`
+		AirQualityCategory null.Int `json:"AQc"`
+		GrassCategory      null.Int `json:"Gc"`
+		MoldCategory       null.Int `json:"Mc"`
+		RagweedCategory    null.Int `json:"Rc"`
+		TreeCategory       null.Int `json:"Tc"`
 
-		Day                      ApiResponseInterface
-		Night                    ApiResponseInterface
+		Day   ApiResponseInterface
+		Night ApiResponseInterface
 	}
 
 	//----------------------------------------------
@@ -970,38 +946,37 @@ type (
 	 * @brief
 	 */
 	NullableAccuHourlyForecastFormatV1p2 struct {
-		DateTime                 null.String `json:"DT"`
+		DateTime null.String `json:"DT"`
 		//DateStr                  null.String
 		//TimeStr                  null.String
 		//MinTemp                  null.Float
 		//MaxTemp                  null.Float
-		EpochDateTime            null.Int `json:"U"`
-		WeatherIcon              null.Int `json:"WX"`
-		IsDaylight               null.Bool `json:"isDL"`
+		EpochDateTime            null.Int   `json:"U"`
+		WeatherIcon              null.Int   `json:"WX"`
+		IsDaylight               null.Bool  `json:"isDL"`
 		Temperature              null.Float `json:"T"`
 		RealFeelTemperature      null.Float `json:"F"`
 		WetBulbTemperature       null.Float `json:"WB"`
 		DewPoint                 null.Float `json:"DP"`
 		WindSpeed                null.Float `json:"WS"`
-		WindHeading              null.Int `json:"WH"`
+		WindHeading              null.Int   `json:"WH"`
 		WindGust                 null.Float `json:"GS"`
-		WindGustHeading          null.Int `json:"GH"`
-		RelativeHumidity         null.Int `json:"RHu"`
+		WindGustHeading          null.Int   `json:"GH"`
+		RelativeHumidity         null.Int   `json:"RHu"`
 		Visibility               null.Float `json:"V"`
 		Ceiling                  null.Float `json:"C"`
-		UVIndex                  null.Int `json:"UVi"`
-		UVCategory               null.Int `json:"UVc"`
-		PrecipitationProbability null.Int `json:"Pp"`
-		RainProbability          null.Int `json:"Rp"`
-		SnowProbability          null.Int `json:"Sp"`
-		IceProbability           null.Int `json:"Ip"`
+		UVIndex                  null.Int   `json:"UVi"`
+		UVCategory               null.Int   `json:"UVc"`
+		PrecipitationProbability null.Int   `json:"Pp"`
+		RainProbability          null.Int   `json:"Rp"`
+		SnowProbability          null.Int   `json:"Sp"`
+		IceProbability           null.Int   `json:"Ip"`
 		TotalLiquid              null.Float `json:"TLiq"`
 		Rain                     null.Float `json:"R"`
 		Snow                     null.Float `json:"S"`
 		Ice                      null.Float `json:"I"`
-		CloudCover               null.Int `json:"CC"`
+		CloudCover               null.Int   `json:"CC"`
 	}
-
 
 	//----------------------------------------------
 	//
@@ -1010,12 +985,12 @@ type (
 	 * @brief
 	 */
 	NullableAccuCurrentForecastResponseFormatV1p2 struct {
-		Epoch null.Int `json:"U"`
-		WeatherIcon null.Int `json:"WX"`
-		IsDayTime null.Bool `json:"isDT"`
-		Temperature null.Float `json:"T"`
-		TornadoProbability null.Int `json:"TNp"`
-		HailProbability null.Int `json:"Hp"`
+		Epoch              null.Int   `json:"U"`
+		WeatherIcon        null.Int   `json:"WX"`
+		IsDayTime          null.Bool  `json:"isDT"`
+		Temperature        null.Float `json:"T"`
+		TornadoProbability null.Int   `json:"TNp"`
+		HailProbability    null.Int   `json:"Hp"`
 
 		// Deprecated
 		TornadoProbabilityDeprecated null.Int `json:"tornadoes"`
@@ -1030,19 +1005,19 @@ type (
 	 * @brief
 	 */
 	NullableDayNightDataFormatV1p2 struct {
-		Icon              null.Int `json:"WX"`
-		PrecipitationProbability null.Int `json:"Pp"`
-		ThunderstormProbability  null.Int `json:"Tp"`
-		RainProbability          null.Int `json:"Rp"`
-		SnowProbability          null.Int `json:"Sp"`
-		IceProbability           null.Int `json:"Ip"`
+		Icon                     null.Int   `json:"WX"`
+		PrecipitationProbability null.Int   `json:"Pp"`
+		ThunderstormProbability  null.Int   `json:"Tp"`
+		RainProbability          null.Int   `json:"Rp"`
+		SnowProbability          null.Int   `json:"Sp"`
+		IceProbability           null.Int   `json:"Ip"`
 		HoursOfPrecipitation     null.Float `json:"Ph"`
 		HoursOfRain              null.Float `json:"Rh"`
 		HoursOfSnow              null.Float `json:"Sh"`
 		HoursOfIce               null.Float `json:"Ih"`
-		CloudCover               null.Int `json:"CC"`
-		WindSpeed				 null.Float `json:"WS"`
-		WindHeading              null.Int `json:"WH"`
+		CloudCover               null.Int   `json:"CC"`
+		WindSpeed                null.Float `json:"WS"`
+		WindHeading              null.Int   `json:"WH"`
 		WindGust                 null.Float `json:"GS"`
 		TotalLiquid              null.Float `json:"TLiq"`
 		Rain                     null.Float `json:"R"`
@@ -1074,7 +1049,6 @@ type (
 		TzName             null.String `json:"tz_name"`
 	}
 
-
 	//==============================================
 	// JSON Facades
 	//==============================================
@@ -1086,17 +1060,15 @@ type (
 	 * @brief
 	 */
 	ForecastResponseVersionOne struct {
-		Date       		null.String
-		Time       		null.String
-		GmtOffset     	null.Float
+		Date            null.String
+		Time            null.String
+		GmtOffset       null.Float
 		FlowControl     null.Int
 		CurrentForecast NullableAccuCurrentForecastResponse
-		DailyForecasts 	[]NullableAccuDailyForecast
+		DailyForecasts  []NullableAccuDailyForecast
 		HourlyForecasts []NullableAccuHourlyForecast
 	}
-
 )
-
 
 //==============================================
 // Protocols - MarshalJSON
@@ -1108,7 +1080,7 @@ type (
 /**
  * @brief
  */
-func AccuIconDetails(icon null.Int) (AccuIcon) {
+func AccuIconDetails(icon null.Int) AccuIcon {
 	if icon.Valid {
 		if val, ok := AccuweatherIcons[int(icon.Int64)]; ok {
 			return val
@@ -1123,7 +1095,7 @@ func AccuIconDetails(icon null.Int) (AccuIcon) {
 /**
  * @brief
  */
-func DisplayIconByAccuIcon(icon null.Int) (null.Int) {
+func DisplayIconByAccuIcon(icon null.Int) null.Int {
 	a := AccuIconDetails(icon)
 	if a.IconNumber != 0 {
 		return null.NewInt(int64(a.DisplayIcon), true)
@@ -1216,7 +1188,7 @@ func VersionedJson(s ApiResponseInterface, version string) (string, error) {
 /**
  * @brief
  */
-func (s ApiString) JsonResponse(version string) (string, error){
+func (s ApiString) JsonResponse(version string) (string, error) {
 	return string(s), nil
 }
 
@@ -1226,82 +1198,107 @@ func (s ApiString) JsonResponse(version string) (string, error){
 /**
  * @brief
  */
-func (s NullableAccuHourlyForecast) JsonResponse(version string) (string, error) { return VersionedJson(s, version) }
+func (s NullableAccuHourlyForecast) JsonResponse(version string) (string, error) {
+	return VersionedJson(s, version)
+}
 
 /**
  * @brief
  */
-func (s NullableAccuHourlyForecastFormatV1p2) JsonResponse(version string) (string, error) { return VersionedJson(s, version) }
+func (s NullableAccuHourlyForecastFormatV1p2) JsonResponse(version string) (string, error) {
+	return VersionedJson(s, version)
+}
 
 /**
  * @brief
  */
-func (s NullableAccuHourlyForecastFormatV1p3) JsonResponse(version string) (string, error) { return VersionedJson(s, version) }
-
-
-/**
- * @brief
- */
-func (s NullableAccuDailyForecast) JsonResponse(version string) (string, error) { return VersionedJson(s, version) }
+func (s NullableAccuHourlyForecastFormatV1p3) JsonResponse(version string) (string, error) {
+	return VersionedJson(s, version)
+}
 
 /**
  * @brief
  */
-func (s NullableAccuDailyForecastFormatV1p2) JsonResponse(version string) (string, error) { return VersionedJson(s, version) }
+func (s NullableAccuDailyForecast) JsonResponse(version string) (string, error) {
+	return VersionedJson(s, version)
+}
 
 /**
  * @brief
  */
-func (s NullableAccuDailyForecastFormatV1p3) JsonResponse(version string) (string, error) { return VersionedJson(s, version) }
-
-
-/**
- * @brief
- */
-func (s NullableDayNightData) JsonResponse(version string) (string, error) { return VersionedJson(s, version) }
+func (s NullableAccuDailyForecastFormatV1p2) JsonResponse(version string) (string, error) {
+	return VersionedJson(s, version)
+}
 
 /**
  * @brief
  */
-func (s NullableDayNightDataFormatV1p2) JsonResponse(version string) (string, error) { return VersionedJson(s, version) }
+func (s NullableAccuDailyForecastFormatV1p3) JsonResponse(version string) (string, error) {
+	return VersionedJson(s, version)
+}
 
 /**
  * @brief
  */
-func (s NullableDayNightDataFormatV1p3) JsonResponse(version string) (string, error) { return VersionedJson(s, version) }
-
-
-/**
- * @brief
- */
-func (s NullableAccuCurrentForecastResponse) JsonResponse(version string) (string, error) { return VersionedJson(s, version) }
+func (s NullableDayNightData) JsonResponse(version string) (string, error) {
+	return VersionedJson(s, version)
+}
 
 /**
  * @brief
  */
-func (s NullableAccuCurrentForecastResponseFormatV1p2) JsonResponse(version string) (string, error) { return VersionedJson(s, version) }
+func (s NullableDayNightDataFormatV1p2) JsonResponse(version string) (string, error) {
+	return VersionedJson(s, version)
+}
 
 /**
  * @brief
  */
-func (s NullableAccuCurrentForecastResponseFormatV1p3) JsonResponse(version string) (string, error) { return VersionedJson(s, version) }
-
-
-/**
- * @brief
- */
-func (s NullableUniversalForecast) JsonResponse(version string) (string, error) { return VersionedJson(s, version) }
+func (s NullableDayNightDataFormatV1p3) JsonResponse(version string) (string, error) {
+	return VersionedJson(s, version)
+}
 
 /**
  * @brief
  */
-func (s NullableUniversalForecastFormatV1p2) JsonResponse(version string) (string, error) { return VersionedJson(s, version) }
+func (s NullableAccuCurrentForecastResponse) JsonResponse(version string) (string, error) {
+	return VersionedJson(s, version)
+}
 
 /**
  * @brief
  */
-func (s NullableUniversalForecastFormatV1p3) JsonResponse(version string) (string, error) { return VersionedJson(s, version) }
+func (s NullableAccuCurrentForecastResponseFormatV1p2) JsonResponse(version string) (string, error) {
+	return VersionedJson(s, version)
+}
 
+/**
+ * @brief
+ */
+func (s NullableAccuCurrentForecastResponseFormatV1p3) JsonResponse(version string) (string, error) {
+	return VersionedJson(s, version)
+}
+
+/**
+ * @brief
+ */
+func (s NullableUniversalForecast) JsonResponse(version string) (string, error) {
+	return VersionedJson(s, version)
+}
+
+/**
+ * @brief
+ */
+func (s NullableUniversalForecastFormatV1p2) JsonResponse(version string) (string, error) {
+	return VersionedJson(s, version)
+}
+
+/**
+ * @brief
+ */
+func (s NullableUniversalForecastFormatV1p3) JsonResponse(version string) (string, error) {
+	return VersionedJson(s, version)
+}
 
 //==============================================
 // Protocols - ResponseFormat
@@ -1357,7 +1354,6 @@ func (s NullableAccuHourlyForecast) ResponseFormat(version string) (ApiResponseI
 		//r.MaxTemp = s.MaxTemp
 		r.EpochDateTime = s.EpochDateTime
 
-
 		r.WeatherIcon = DisplayIconByAccuIcon(s.WeatherIcon)
 
 		r.IsDaylight = s.IsDaylight
@@ -1401,7 +1397,6 @@ func (s NullableAccuHourlyForecast) ResponseFormat(version string) (ApiResponseI
 		r.EpochDateTime = s.EpochDateTime
 		r.WeatherIcon = DisplayIconByAccuIcon(s.WeatherIcon)
 
-
 		r.IsDaylight = s.IsDaylight
 		r.Temperature = s.Temperature.Value
 		r.RealFeelTemperature = s.RealFeelTemperature.Value
@@ -1438,7 +1433,6 @@ func (s NullableAccuHourlyForecast) ResponseFormat(version string) (ApiResponseI
 		r.EpochDateTime = s.EpochDateTime
 		r.WeatherIcon = DisplayIconByAccuIcon(s.WeatherIcon)
 
-
 		r.IsDaylight = s.IsDaylight
 		r.Temperature = s.Temperature.Value
 		r.WindSpeed = s.Wind.Speed.Value
@@ -1474,7 +1468,6 @@ func (s NullableAccuHourlyForecast) ResponseFormat(version string) (ApiResponseI
 		r.EpochDateTime = s.EpochDateTime
 		r.WeatherIcon = DisplayIconByAccuIcon(s.WeatherIcon)
 
-
 		r.IsDaylight = s.IsDaylight
 		r.Temperature = s.Temperature.Value
 		r.WindSpeed = s.Wind.Speed.Value
@@ -1502,7 +1495,6 @@ func (s NullableAccuHourlyForecast) ResponseFormat(version string) (ApiResponseI
 		// r.CloudCover = s.CloudCover
 		return r, nil
 
-
 	default:
 		return s, errors.New("unsupported version")
 	}
@@ -1519,7 +1511,6 @@ func (s NullableAccuHourlyForecastFormatV1p3) ResponseFormat(version string) (Ap
 		return s, errors.New("unsupported version")
 	}
 }
-
 
 /**
  * @brief
@@ -1577,25 +1568,39 @@ func (s NullableAccuDailyForecast) ResponseFormat(version string) (ApiResponseIn
 		r.DaySummaryHeating = s.DegreeDaySummary.Heating.Value
 
 		if val, ok := s.AirAndPollenMap["UVIndex"]; ok {
-			if ok {r.UVIndex = null.NewInt(int64(val), true)}
+			if ok {
+				r.UVIndex = null.NewInt(int64(val), true)
+			}
 		}
 		if val, ok := s.AirAndPollenCategoryMap["UVIndex"]; ok {
-			if ok {r.UVCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)}
+			if ok {
+				r.UVCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)
+			}
 		}
 		if val, ok := s.AirAndPollenCategoryMap["AirQuality"]; ok {
-			if ok {r.AirQualityCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)}
+			if ok {
+				r.AirQualityCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)
+			}
 		}
 		if val, ok := s.AirAndPollenCategoryMap["Grass"]; ok {
-			if ok {r.GrassCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)}
+			if ok {
+				r.GrassCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)
+			}
 		}
 		if val, ok := s.AirAndPollenCategoryMap["Mold"]; ok {
-			if ok {r.MoldCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)}
+			if ok {
+				r.MoldCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)
+			}
 		}
 		if val, ok := s.AirAndPollenCategoryMap["Ragweed"]; ok {
-			if ok {r.RagweedCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)}
+			if ok {
+				r.RagweedCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)
+			}
 		}
 		if val, ok := s.AirAndPollenCategoryMap["Tree"]; ok {
-			if ok {r.TreeCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)}
+			if ok {
+				r.TreeCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)
+			}
 		}
 
 		r.Day, _ = s.Day.ResponseFormat(version)
@@ -1635,32 +1640,45 @@ func (s NullableAccuDailyForecast) ResponseFormat(version string) (ApiResponseIn
 		r.DaySummaryHeating = s.DegreeDaySummary.Heating.Value
 
 		if val, ok := s.AirAndPollenMap["UVIndex"]; ok {
-			if ok {r.UVIndex = null.NewInt(int64(val), true)}
+			if ok {
+				r.UVIndex = null.NewInt(int64(val), true)
+			}
 		}
 		if val, ok := s.AirAndPollenCategoryMap["UVIndex"]; ok {
-			if ok {r.UVCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)}
+			if ok {
+				r.UVCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)
+			}
 		}
 		if val, ok := s.AirAndPollenCategoryMap["AirQuality"]; ok {
-			if ok {r.AirQualityCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)}
+			if ok {
+				r.AirQualityCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)
+			}
 		}
 		if val, ok := s.AirAndPollenCategoryMap["Grass"]; ok {
-			if ok {r.GrassCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)}
+			if ok {
+				r.GrassCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)
+			}
 		}
 		if val, ok := s.AirAndPollenCategoryMap["Mold"]; ok {
-			if ok {r.MoldCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)}
+			if ok {
+				r.MoldCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)
+			}
 		}
 		if val, ok := s.AirAndPollenCategoryMap["Ragweed"]; ok {
-			if ok {r.RagweedCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)}
+			if ok {
+				r.RagweedCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)
+			}
 		}
 		if val, ok := s.AirAndPollenCategoryMap["Tree"]; ok {
-			if ok {r.TreeCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)}
+			if ok {
+				r.TreeCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)
+			}
 		}
 
 		r.Day, _ = s.Day.ResponseFormat(version)
 		r.Night, _ = s.Night.ResponseFormat(version)
 
 		return r, nil
-
 
 	case "1.4e":
 		weatherCategoryToI8NCode = WeatherCategoryToFirmwareMapExtended
@@ -1688,25 +1706,39 @@ func (s NullableAccuDailyForecast) ResponseFormat(version string) (ApiResponseIn
 		r.HoursOfSun = s.HoursOfSun
 
 		if val, ok := s.AirAndPollenMap["UVIndex"]; ok {
-			if ok {r.UVIndex = null.NewInt(int64(val), true)}
+			if ok {
+				r.UVIndex = null.NewInt(int64(val), true)
+			}
 		}
 		if val, ok := s.AirAndPollenCategoryMap["UVIndex"]; ok {
-			if ok {r.UVCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)}
+			if ok {
+				r.UVCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)
+			}
 		}
 		if val, ok := s.AirAndPollenCategoryMap["AirQuality"]; ok {
-			if ok {r.AirQualityCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)}
+			if ok {
+				r.AirQualityCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)
+			}
 		}
 		if val, ok := s.AirAndPollenCategoryMap["Grass"]; ok {
-			if ok {r.GrassCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)}
+			if ok {
+				r.GrassCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)
+			}
 		}
 		if val, ok := s.AirAndPollenCategoryMap["Mold"]; ok {
-			if ok {r.MoldCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)}
+			if ok {
+				r.MoldCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)
+			}
 		}
 		if val, ok := s.AirAndPollenCategoryMap["Ragweed"]; ok {
-			if ok {r.RagweedCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)}
+			if ok {
+				r.RagweedCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)
+			}
 		}
 		if val, ok := s.AirAndPollenCategoryMap["Tree"]; ok {
-			if ok {r.TreeCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)}
+			if ok {
+				r.TreeCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)
+			}
 		}
 
 		r.Day, _ = s.Day.ResponseFormat(version)
@@ -1740,25 +1772,39 @@ func (s NullableAccuDailyForecast) ResponseFormat(version string) (ApiResponseIn
 		r.HoursOfSun = s.HoursOfSun
 
 		if val, ok := s.AirAndPollenMap["UVIndex"]; ok {
-			if ok {r.UVIndex = null.NewInt(int64(val), true)}
+			if ok {
+				r.UVIndex = null.NewInt(int64(val), true)
+			}
 		}
 		if val, ok := s.AirAndPollenCategoryMap["UVIndex"]; ok {
-			if ok {r.UVCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)}
+			if ok {
+				r.UVCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)
+			}
 		}
 		if val, ok := s.AirAndPollenCategoryMap["AirQuality"]; ok {
-			if ok {r.AirQualityCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)}
+			if ok {
+				r.AirQualityCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)
+			}
 		}
 		if val, ok := s.AirAndPollenCategoryMap["Grass"]; ok {
-			if ok {r.GrassCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)}
+			if ok {
+				r.GrassCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)
+			}
 		}
 		if val, ok := s.AirAndPollenCategoryMap["Mold"]; ok {
-			if ok {r.MoldCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)}
+			if ok {
+				r.MoldCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)
+			}
 		}
 		if val, ok := s.AirAndPollenCategoryMap["Ragweed"]; ok {
-			if ok {r.RagweedCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)}
+			if ok {
+				r.RagweedCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)
+			}
 		}
 		if val, ok := s.AirAndPollenCategoryMap["Tree"]; ok {
-			if ok {r.TreeCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)}
+			if ok {
+				r.TreeCategory = null.NewInt(int64(weatherCategoryToI8NCode[val]), true)
+			}
 		}
 
 		r.Day, _ = s.Day.ResponseFormat(version)
@@ -1766,15 +1812,11 @@ func (s NullableAccuDailyForecast) ResponseFormat(version string) (ApiResponseIn
 
 		return r, nil
 
-
 	default:
 		return s, errors.New("unsupported version")
 	}
 
-
-
 }
-
 
 //----------------------------------------------
 //
@@ -1784,7 +1826,7 @@ func (s NullableAccuDailyForecast) ResponseFormat(version string) (ApiResponseIn
  */
 func (s NullableAccuDailyForecastFormatV1p3) ResponseFormat(version string) (ApiResponseInterface, error) {
 	//log.Println("[ResponseFormat] NullableAccuDailyForecastFormatV1p2")
-	if version == "1.2" || version == "1.3" || version == "1.4" || version == "1.5" || version == "1.2e" || version == "1.3e" || version == "1.4e" || version == "1.5e"  {
+	if version == "1.2" || version == "1.3" || version == "1.4" || version == "1.5" || version == "1.2e" || version == "1.3e" || version == "1.4e" || version == "1.5e" {
 		return s, nil
 	} else {
 		return s, errors.New("unsupported version")
@@ -1799,7 +1841,7 @@ func (s NullableAccuDailyForecastFormatV1p3) ResponseFormat(version string) (Api
  */
 func (s NullableAccuDailyForecastFormatV1p2) ResponseFormat(version string) (ApiResponseInterface, error) {
 	//log.Println("[ResponseFormat] NullableAccuDailyForecastFormatV1p2")
-	if version == "1.2" || version == "1.3" || version == "1.4" || version == "1.5" || version == "1.2e" || version == "1.3e" || version == "1.4e" || version == "1.5e"  {
+	if version == "1.2" || version == "1.3" || version == "1.4" || version == "1.5" || version == "1.2e" || version == "1.3e" || version == "1.4e" || version == "1.5e" {
 		return s, nil
 	} else {
 		return s, errors.New("unsupported version")
@@ -1913,12 +1955,10 @@ func (s NullableDayNightData) ResponseFormat(version string) (ApiResponseInterfa
 		r.Ice = s.Ice.Value
 		return r, nil
 
-
 	default:
 		return s, errors.New("unsupported version")
 	}
 }
-
 
 //----------------------------------------------
 //
@@ -1928,7 +1968,7 @@ func (s NullableDayNightData) ResponseFormat(version string) (ApiResponseInterfa
  */
 func (s NullableDayNightDataFormatV1p3) ResponseFormat(version string) (ApiResponseInterface, error) {
 	//log.Println("[ResponseFormat] NullableDayNightDataFormatV1p3")
-	if version == "1.2" || version == "1.3" || version == "1.4" || version == "1.5" || version == "1.2e" || version == "1.3e" || version == "1.4e" || version == "1.5e"  {
+	if version == "1.2" || version == "1.3" || version == "1.4" || version == "1.5" || version == "1.2e" || version == "1.3e" || version == "1.4e" || version == "1.5e" {
 		return s, nil
 	} else {
 		return s, errors.New("unsupported version")
@@ -1943,12 +1983,13 @@ func (s NullableDayNightDataFormatV1p3) ResponseFormat(version string) (ApiRespo
  */
 func (s NullableDayNightDataFormatV1p2) ResponseFormat(version string) (ApiResponseInterface, error) {
 	//log.Println("[ResponseFormat] NullableDayNightDataFormatV1p2")
-	if version == "1.2" || version == "1.3" || version == "1.4" || version == "1.5" || version == "1.2e" || version == "1.3e" || version == "1.4e" || version == "1.5e"  {
+	if version == "1.2" || version == "1.3" || version == "1.4" || version == "1.5" || version == "1.2e" || version == "1.3e" || version == "1.4e" || version == "1.5e" {
 		return s, nil
 	} else {
 		return s, errors.New("unsupported version")
 	}
 }
+
 //----------------------------------------------
 //
 //----------------------------------------------
@@ -2028,7 +2069,7 @@ func (s NullableAccuCurrentForecastResponse) ResponseFormat(version string) (Api
  */
 func (s NullableAccuCurrentForecastResponseFormatV1p3) ResponseFormat(version string) (ApiResponseInterface, error) {
 	//log.Println("[ResponseFormat] NullableAccuCurrentForecastResponseFormatV1p3")
-	if version == "1.2" || version == "1.3" || version == "1.4" || version == "1.5" || version == "1.2e" || version == "1.3e" || version == "1.4e" || version == "1.5e"  {
+	if version == "1.2" || version == "1.3" || version == "1.4" || version == "1.5" || version == "1.2e" || version == "1.3e" || version == "1.4e" || version == "1.5e" {
 		return s, nil
 	} else {
 		return s, errors.New("unsupported version")
@@ -2049,7 +2090,6 @@ func (s NullableAccuCurrentForecastResponseFormatV1p2) ResponseFormat(version st
 		return s, errors.New("unsupported version")
 	}
 }
-
 
 //----------------------------------------------
 //
@@ -2090,37 +2130,34 @@ func (s NullableUniversalForecast) ResponseFormat(version string) (ApiResponseIn
 		if s.Daily != nil {
 			for i := 0; i < len(*s.Daily); i++ {
 
-				if  !((*s.Daily)[i]).Moon.Rise.Valid {
+				if !((*s.Daily)[i]).Moon.Rise.Valid {
 					if i > 0 {
-						((*s.Daily)[i]).Moon.Rise = ((*s.Daily)[i - 1]).Moon.Rise;
+						((*s.Daily)[i]).Moon.Rise = ((*s.Daily)[i-1]).Moon.Rise
 					} else {
-						((*s.Daily)[i]).Moon.Rise = ((*s.Daily)[i + 1]).Moon.Rise;
+						((*s.Daily)[i]).Moon.Rise = ((*s.Daily)[i+1]).Moon.Rise
 					}
 				}
-				if  !((*s.Daily)[i]).Moon.Set.Valid {
+				if !((*s.Daily)[i]).Moon.Set.Valid {
 					if i > 0 {
-						((*s.Daily)[i]).Moon.Set = ((*s.Daily)[i - 1]).Moon.Set;
+						((*s.Daily)[i]).Moon.Set = ((*s.Daily)[i-1]).Moon.Set
 					} else {
-						((*s.Daily)[i]).Moon.Set = ((*s.Daily)[i + 1]).Moon.Set;
+						((*s.Daily)[i]).Moon.Set = ((*s.Daily)[i+1]).Moon.Set
 					}
 				}
-				if  !((*s.Daily)[i]).Sun.Rise.Valid {
+				if !((*s.Daily)[i]).Sun.Rise.Valid {
 					if i > 0 {
-						((*s.Daily)[i]).Sun.Rise = ((*s.Daily)[i - 1]).Sun.Rise;
+						((*s.Daily)[i]).Sun.Rise = ((*s.Daily)[i-1]).Sun.Rise
 					} else {
-						((*s.Daily)[i]).Sun.Rise = ((*s.Daily)[i + 1]).Sun.Rise;
+						((*s.Daily)[i]).Sun.Rise = ((*s.Daily)[i+1]).Sun.Rise
 					}
 				}
-				if  !((*s.Daily)[i]).Sun.Set.Valid {
+				if !((*s.Daily)[i]).Sun.Set.Valid {
 					if i > 0 {
-						((*s.Daily)[i]).Sun.Set = ((*s.Daily)[i - 1]).Sun.Set;
+						((*s.Daily)[i]).Sun.Set = ((*s.Daily)[i-1]).Sun.Set
 					} else {
-						((*s.Daily)[i]).Sun.Set = ((*s.Daily)[i + 1]).Sun.Set;
+						((*s.Daily)[i]).Sun.Set = ((*s.Daily)[i+1]).Sun.Set
 					}
 				}
-
-
-
 
 				r, _ := ((*s.Daily)[i]).ResponseFormat(version)
 				daily = append(daily, r)
@@ -2134,9 +2171,8 @@ func (s NullableUniversalForecast) ResponseFormat(version string) (ApiResponseIn
 
 				// work around for null incoming temperature
 				if i == 0 && !((*s.Hourly)[i]).Temperature.Value.Valid {
-					((*s.Hourly)[i]).Temperature.Value = ((*s.Hourly)[i + 1]).Temperature.Value
+					((*s.Hourly)[i]).Temperature.Value = ((*s.Hourly)[i+1]).Temperature.Value
 				}
-
 
 				r, _ := ((*s.Hourly)[i]).ResponseFormat(version)
 				hourly = append(hourly, r)
@@ -2174,33 +2210,32 @@ func (s NullableUniversalForecast) ResponseFormat(version string) (ApiResponseIn
 		if s.Daily != nil {
 			for i := 0; i < len(*s.Daily); i++ {
 
-
-				if  !((*s.Daily)[i]).Moon.Rise.Valid {
+				if !((*s.Daily)[i]).Moon.Rise.Valid {
 					if i > 0 {
-						((*s.Daily)[i]).Moon.Rise = ((*s.Daily)[i - 1]).Moon.Rise;
+						((*s.Daily)[i]).Moon.Rise = ((*s.Daily)[i-1]).Moon.Rise
 					} else {
-						((*s.Daily)[i]).Moon.Rise = ((*s.Daily)[i + 1]).Moon.Rise;
+						((*s.Daily)[i]).Moon.Rise = ((*s.Daily)[i+1]).Moon.Rise
 					}
 				}
-				if  !((*s.Daily)[i]).Moon.Set.Valid {
+				if !((*s.Daily)[i]).Moon.Set.Valid {
 					if i > 0 {
-						((*s.Daily)[i]).Moon.Set = ((*s.Daily)[i - 1]).Moon.Set;
+						((*s.Daily)[i]).Moon.Set = ((*s.Daily)[i-1]).Moon.Set
 					} else {
-						((*s.Daily)[i]).Moon.Set = ((*s.Daily)[i + 1]).Moon.Set;
+						((*s.Daily)[i]).Moon.Set = ((*s.Daily)[i+1]).Moon.Set
 					}
 				}
-				if  !((*s.Daily)[i]).Sun.Rise.Valid {
+				if !((*s.Daily)[i]).Sun.Rise.Valid {
 					if i > 0 {
-						((*s.Daily)[i]).Sun.Rise = ((*s.Daily)[i - 1]).Sun.Rise;
+						((*s.Daily)[i]).Sun.Rise = ((*s.Daily)[i-1]).Sun.Rise
 					} else {
-						((*s.Daily)[i]).Sun.Rise = ((*s.Daily)[i + 1]).Sun.Rise;
+						((*s.Daily)[i]).Sun.Rise = ((*s.Daily)[i+1]).Sun.Rise
 					}
 				}
-				if  !((*s.Daily)[i]).Sun.Set.Valid {
+				if !((*s.Daily)[i]).Sun.Set.Valid {
 					if i > 0 {
-						((*s.Daily)[i]).Sun.Set = ((*s.Daily)[i - 1]).Sun.Set;
+						((*s.Daily)[i]).Sun.Set = ((*s.Daily)[i-1]).Sun.Set
 					} else {
-						((*s.Daily)[i]).Sun.Set = ((*s.Daily)[i + 1]).Sun.Set;
+						((*s.Daily)[i]).Sun.Set = ((*s.Daily)[i+1]).Sun.Set
 					}
 				}
 
@@ -2216,7 +2251,7 @@ func (s NullableUniversalForecast) ResponseFormat(version string) (ApiResponseIn
 
 				// work around for null incoming temperature
 				if i == 0 && !((*s.Hourly)[i]).Temperature.Value.Valid {
-					((*s.Hourly)[i]).Temperature.Value = ((*s.Hourly)[i + 1]).Temperature.Value
+					((*s.Hourly)[i]).Temperature.Value = ((*s.Hourly)[i+1]).Temperature.Value
 				}
 
 				r, _ := ((*s.Hourly)[i]).ResponseFormat(version)
@@ -2255,33 +2290,32 @@ func (s NullableUniversalForecast) ResponseFormat(version string) (ApiResponseIn
 		if s.Daily != nil {
 			for i := 0; i < len(*s.Daily); i++ {
 
-
-				if  !((*s.Daily)[i]).Moon.Rise.Valid {
+				if !((*s.Daily)[i]).Moon.Rise.Valid {
 					if i > 0 {
-						((*s.Daily)[i]).Moon.Rise = ((*s.Daily)[i - 1]).Moon.Rise;
+						((*s.Daily)[i]).Moon.Rise = ((*s.Daily)[i-1]).Moon.Rise
 					} else {
-						((*s.Daily)[i]).Moon.Rise = ((*s.Daily)[i + 1]).Moon.Rise;
+						((*s.Daily)[i]).Moon.Rise = ((*s.Daily)[i+1]).Moon.Rise
 					}
 				}
-				if  !((*s.Daily)[i]).Moon.Set.Valid {
+				if !((*s.Daily)[i]).Moon.Set.Valid {
 					if i > 0 {
-						((*s.Daily)[i]).Moon.Set = ((*s.Daily)[i - 1]).Moon.Set;
+						((*s.Daily)[i]).Moon.Set = ((*s.Daily)[i-1]).Moon.Set
 					} else {
-						((*s.Daily)[i]).Moon.Set = ((*s.Daily)[i + 1]).Moon.Set;
+						((*s.Daily)[i]).Moon.Set = ((*s.Daily)[i+1]).Moon.Set
 					}
 				}
-				if  !((*s.Daily)[i]).Sun.Rise.Valid {
+				if !((*s.Daily)[i]).Sun.Rise.Valid {
 					if i > 0 {
-						((*s.Daily)[i]).Sun.Rise = ((*s.Daily)[i - 1]).Sun.Rise;
+						((*s.Daily)[i]).Sun.Rise = ((*s.Daily)[i-1]).Sun.Rise
 					} else {
-						((*s.Daily)[i]).Sun.Rise = ((*s.Daily)[i + 1]).Sun.Rise;
+						((*s.Daily)[i]).Sun.Rise = ((*s.Daily)[i+1]).Sun.Rise
 					}
 				}
-				if  !((*s.Daily)[i]).Sun.Set.Valid {
+				if !((*s.Daily)[i]).Sun.Set.Valid {
 					if i > 0 {
-						((*s.Daily)[i]).Sun.Set = ((*s.Daily)[i - 1]).Sun.Set;
+						((*s.Daily)[i]).Sun.Set = ((*s.Daily)[i-1]).Sun.Set
 					} else {
-						((*s.Daily)[i]).Sun.Set = ((*s.Daily)[i + 1]).Sun.Set;
+						((*s.Daily)[i]).Sun.Set = ((*s.Daily)[i+1]).Sun.Set
 					}
 				}
 
@@ -2296,7 +2330,7 @@ func (s NullableUniversalForecast) ResponseFormat(version string) (ApiResponseIn
 			for i := 0; i < len(*s.Hourly); i++ {
 
 				if i == 0 && !((*s.Hourly)[i]).Temperature.Value.Valid {
-					((*s.Hourly)[i]).Temperature.Value = ((*s.Hourly)[i + 1]).Temperature.Value
+					((*s.Hourly)[i]).Temperature.Value = ((*s.Hourly)[i+1]).Temperature.Value
 				}
 
 				r, _ := ((*s.Hourly)[i]).ResponseFormat(version)
@@ -2335,33 +2369,32 @@ func (s NullableUniversalForecast) ResponseFormat(version string) (ApiResponseIn
 		if s.Daily != nil {
 			for i := 0; i < len(*s.Daily); i++ {
 
-
-				if  !((*s.Daily)[i]).Moon.Rise.Valid {
+				if !((*s.Daily)[i]).Moon.Rise.Valid {
 					if i > 0 {
-						((*s.Daily)[i]).Moon.Rise = ((*s.Daily)[i - 1]).Moon.Rise;
+						((*s.Daily)[i]).Moon.Rise = ((*s.Daily)[i-1]).Moon.Rise
 					} else {
-						((*s.Daily)[i]).Moon.Rise = ((*s.Daily)[i + 1]).Moon.Rise;
+						((*s.Daily)[i]).Moon.Rise = ((*s.Daily)[i+1]).Moon.Rise
 					}
 				}
-				if  !((*s.Daily)[i]).Moon.Set.Valid {
+				if !((*s.Daily)[i]).Moon.Set.Valid {
 					if i > 0 {
-						((*s.Daily)[i]).Moon.Set = ((*s.Daily)[i - 1]).Moon.Set;
+						((*s.Daily)[i]).Moon.Set = ((*s.Daily)[i-1]).Moon.Set
 					} else {
-						((*s.Daily)[i]).Moon.Set = ((*s.Daily)[i + 1]).Moon.Set;
+						((*s.Daily)[i]).Moon.Set = ((*s.Daily)[i+1]).Moon.Set
 					}
 				}
-				if  !((*s.Daily)[i]).Sun.Rise.Valid {
+				if !((*s.Daily)[i]).Sun.Rise.Valid {
 					if i > 0 {
-						((*s.Daily)[i]).Sun.Rise = ((*s.Daily)[i - 1]).Sun.Rise;
+						((*s.Daily)[i]).Sun.Rise = ((*s.Daily)[i-1]).Sun.Rise
 					} else {
-						((*s.Daily)[i]).Sun.Rise = ((*s.Daily)[i + 1]).Sun.Rise;
+						((*s.Daily)[i]).Sun.Rise = ((*s.Daily)[i+1]).Sun.Rise
 					}
 				}
-				if  !((*s.Daily)[i]).Sun.Set.Valid {
+				if !((*s.Daily)[i]).Sun.Set.Valid {
 					if i > 0 {
-						((*s.Daily)[i]).Sun.Set = ((*s.Daily)[i - 1]).Sun.Set;
+						((*s.Daily)[i]).Sun.Set = ((*s.Daily)[i-1]).Sun.Set
 					} else {
-						((*s.Daily)[i]).Sun.Set = ((*s.Daily)[i + 1]).Sun.Set;
+						((*s.Daily)[i]).Sun.Set = ((*s.Daily)[i+1]).Sun.Set
 					}
 				}
 
@@ -2376,7 +2409,7 @@ func (s NullableUniversalForecast) ResponseFormat(version string) (ApiResponseIn
 			for i := 0; i < len(*s.Hourly); i++ {
 
 				if i == 0 && !((*s.Hourly)[i]).Temperature.Value.Valid {
-					((*s.Hourly)[i]).Temperature.Value = ((*s.Hourly)[i + 1]).Temperature.Value
+					((*s.Hourly)[i]).Temperature.Value = ((*s.Hourly)[i+1]).Temperature.Value
 				}
 
 				r, _ := ((*s.Hourly)[i]).ResponseFormat(version)
@@ -2389,7 +2422,6 @@ func (s NullableUniversalForecast) ResponseFormat(version string) (ApiResponseIn
 
 		r.FlowControl = s.FlowControl
 		return r, nil
-
 
 	default:
 		return s, errors.New("unsupported version")
@@ -2404,7 +2436,7 @@ func (s NullableUniversalForecast) ResponseFormat(version string) (ApiResponseIn
  */
 func (s NullableUniversalForecastFormatV1p3) ResponseFormat(version string) (ApiResponseInterface, error) {
 	//log.Println("[ResponseFormat] NullableUniversalForecastFormatV1p2")
-	if version == "1.2" || version == "1.3" || version == "1.4" || version == "1.5" || version == "1.2e" || version == "1.3e" || version == "1.4e" || version == "1.5e"  {
+	if version == "1.2" || version == "1.3" || version == "1.4" || version == "1.5" || version == "1.2e" || version == "1.3e" || version == "1.4e" || version == "1.5e" {
 		return s, nil
 	} else {
 		return s, errors.New("unsupported version")
@@ -2419,18 +2451,16 @@ func (s NullableUniversalForecastFormatV1p3) ResponseFormat(version string) (Api
  */
 func (s NullableUniversalForecastFormatV1p2) ResponseFormat(version string) (ApiResponseInterface, error) {
 	//log.Println("[ResponseFormat] NullableUniversalForecastFormatV1p2")
-	if version == "1.2" || version == "1.3" || version == "1.4" || version == "1.5" || version == "1.2e" || version == "1.3e" || version == "1.4e" || version == "1.5e"  {
+	if version == "1.2" || version == "1.3" || version == "1.4" || version == "1.5" || version == "1.2e" || version == "1.3e" || version == "1.4e" || version == "1.5e" {
 		return s, nil
 	} else {
 		return s, errors.New("unsupported version")
 	}
 }
 
-
 //==============================================
 // Protocols - NullableGetWeatherForecastJson
 //==============================================
-
 
 //----------------------------------------------
 // Get weather forecast for category one devices (v2)
@@ -2447,8 +2477,6 @@ func (accuLocation PostalCodeResponse) NullableGetWeatherForecastJsonExtended(ca
 		dailyClip = 8
 		hourlyClip = 15
 	}
-
-
 
 	// Setup Forecast
 	forecast := NullableUniversalForecast{}
@@ -2469,11 +2497,13 @@ func (accuLocation PostalCodeResponse) NullableGetWeatherForecastJsonExtended(ca
 
 	// Grab Weather Time
 	weatherTime, err := GetLocalDateAndHourV2(accuLocation.TimeZone.Name, &extendedInfo)
-	if err != nil {return ApiString("Could not get time from the timeZone")}
+	if err != nil {
+		return ApiString("Could not get time from the timeZone")
+	}
 
 	// Time Range to Disable Flow (Temp Cut Off.)
-	if (weatherTime.DateTime.Month() < 9 || weatherTime.DateTime.Month() == 9 && weatherTime.DateTime.Day() < 20) {
-		forecast.FlowControl = null.NewInt(DefaultModeFlowCommand, true);
+	if weatherTime.DateTime.Month() < 9 || weatherTime.DateTime.Month() == 9 && weatherTime.DateTime.Day() < 20 {
+		forecast.FlowControl = null.NewInt(DefaultModeFlowCommand, true)
 	}
 
 	daily, _ := JsonQueryAccuDayForecastAPI(accuLocation.Key, accuLocation.TimeZone.Name, "10day", weatherTime)
@@ -2487,7 +2517,7 @@ func (accuLocation PostalCodeResponse) NullableGetWeatherForecastJsonExtended(ca
 	//forecast.Date = null.NewString(weatherTime.LocalDate, true)
 	forecast.Date = null.NewString(weatherTime.Iso8601, true)
 	if extendedInfo.TimeZoneOverride.Enabled {
-		forecast.GmtOffset = null.NewFloat(float64(extendedInfo.TimeZoneOverride.Sign * extendedInfo.TimeZoneOverride.HourOffset) + (float64(extendedInfo.TimeZoneOverride.MinuteOffset) / 60.0), true)
+		forecast.GmtOffset = null.NewFloat(float64(extendedInfo.TimeZoneOverride.Sign*extendedInfo.TimeZoneOverride.HourOffset)+(float64(extendedInfo.TimeZoneOverride.MinuteOffset)/60.0), true)
 	}
 
 	// Load Current & NWSForecast
@@ -2531,7 +2561,7 @@ func (accuLocation PostalCodeResponse) NullableGetWeatherForecastJsonExtended(ca
 
 	// Note no validation of populated futureHourly is performed here.
 	unixEpoch := time.Unix(int64(futureHourly[0].EpochDateTime.Int64), 0)
-	forecast.ForecastTime = null.NewString(unixEpoch.Add(time.Minute * time.Duration(forecast.GmtOffset.Float64 *60)).Format("2006-01-02T15:04:05-0700"), true)
+	forecast.ForecastTime = null.NewString(unixEpoch.Add(time.Minute*time.Duration(forecast.GmtOffset.Float64*60)).Format("2006-01-02T15:04:05-0700"), true)
 	//--------------------------------------------------------------------
 	// End Load: Seven Day Forecast, 12 Hour Forecast and ForecastTime
 	//--------------------------------------------------------------------
@@ -2560,12 +2590,9 @@ func (accuLocation PostalCodeResponse) NullableGetWeatherForecastJsonExtended(ca
 	return forecast
 }
 
-
 func (accuLocation PostalCodeResponse) NullableGetWeatherForecastJson(category string, deviceID string, firmwareVersion string, callSubVersion string) ApiResponseInterface {
-	return accuLocation.NullableGetWeatherForecastJsonExtended(category, deviceID, firmwareVersion, callSubVersion, true,true, true, true)
+	return accuLocation.NullableGetWeatherForecastJsonExtended(category, deviceID, firmwareVersion, callSubVersion, true, true, true, true)
 }
-
-
 
 //==============================================
 // Protocols - GetWeatherForecastTest
@@ -2632,8 +2659,6 @@ func (accuLocation PostalCodeResponse) GetWeatherForecastTest(category string, d
 		}
 	*/
 	body, err := common.RedisInstance.GetCachedFile("/templates", templateFile, time.Hour)
-
-
 
 	tmpl, err := template.New("body").Funcs(template.FuncMap{
 		"getWifiIcon": func(accuIcon int) int {
@@ -2702,17 +2727,16 @@ func (accuLocation PostalCodeResponse) GetWeatherForecastV2(category string, dev
 	// @TODO - return anonymous if inside exception period and device is on previous API
 	// @TODO - time loops and compression if specified in extendedInfo
 
-
 	//log.Printf("getWeatherForecastV2 location key : %s, Timezone:%s, Device Category: %s, Device ID: %s", accuLocation.Key, accuLocation.TimeZone.Name, category, deviceID)
 	weatherTime, err := GetLocalDateAndHourV2(accuLocation.TimeZone.Name, &extendedInfo)
 
 	// Time Range to Disable Flow (Temp Cut Off.)
-	if (weatherTime.DateTime.Month() < 9 || weatherTime.DateTime.Month() == 9 && weatherTime.DateTime.Day() < 20) {
+	if weatherTime.DateTime.Month() < 9 || weatherTime.DateTime.Month() == 9 && weatherTime.DateTime.Day() < 20 {
 		flow = DefaultModeFlowCommand
 	} else {
-		if (extendedInfo.HasDateTimeBug) {
+		if extendedInfo.HasDateTimeBug {
 			// Force Anonymous response to pre patched firmway
-			if (firmwareVersion == "") {
+			if firmwareVersion == "" {
 				return "<anonymous:true>"
 			}
 		}
@@ -2748,8 +2772,8 @@ func (accuLocation PostalCodeResponse) GetWeatherForecastV2(category string, dev
 		ats.DateStr = weatherTime.LocalDate
 		ats.TimeStr = weatherTime.LocalTime
 		ats.GmtOffset = accuLocation.TimeZone.GmtOffset
-		if (extendedInfo.TimeZoneOverride.Enabled) {
-			ats.GmtOffset = float64(extendedInfo.TimeZoneOverride.Sign * extendedInfo.TimeZoneOverride.HourOffset) + (float64(extendedInfo.TimeZoneOverride.MinuteOffset) / 60.0)
+		if extendedInfo.TimeZoneOverride.Enabled {
+			ats.GmtOffset = float64(extendedInfo.TimeZoneOverride.Sign*extendedInfo.TimeZoneOverride.HourOffset) + (float64(extendedInfo.TimeZoneOverride.MinuteOffset) / 60.0)
 		}
 
 		apiResult = ats
@@ -2769,8 +2793,8 @@ func (accuLocation PostalCodeResponse) GetWeatherForecastV2(category string, dev
 		ats.DateStr = weatherTime.LocalDate
 		ats.TimeStr = weatherTime.LocalTime
 		ats.GmtOffset = accuLocation.TimeZone.GmtOffset
-		if (extendedInfo.TimeZoneOverride.Enabled) {
-			ats.GmtOffset = float64(extendedInfo.TimeZoneOverride.Sign * extendedInfo.TimeZoneOverride.HourOffset) + (float64(extendedInfo.TimeZoneOverride.MinuteOffset) / 60.0)
+		if extendedInfo.TimeZoneOverride.Enabled {
+			ats.GmtOffset = float64(extendedInfo.TimeZoneOverride.Sign*extendedInfo.TimeZoneOverride.HourOffset) + (float64(extendedInfo.TimeZoneOverride.MinuteOffset) / 60.0)
 		}
 		apiResult = ats
 		templateFile = "templateCat2V2"
@@ -2809,8 +2833,8 @@ func (accuLocation PostalCodeResponse) GetWeatherForecastV2(category string, dev
 		ats.TimeStr = weatherTime.LocalTime
 		utime := time.Unix(int64(accu24hForecast[i-12].EpochDateTime), 0)
 		ats.GmtOffset = accuLocation.TimeZone.GmtOffset
-		if (extendedInfo.TimeZoneOverride.Enabled) {
-			ats.GmtOffset = float64(extendedInfo.TimeZoneOverride.Sign * extendedInfo.TimeZoneOverride.HourOffset) + (float64(extendedInfo.TimeZoneOverride.MinuteOffset) / 60.0)
+		if extendedInfo.TimeZoneOverride.Enabled {
+			ats.GmtOffset = float64(extendedInfo.TimeZoneOverride.Sign*extendedInfo.TimeZoneOverride.HourOffset) + (float64(extendedInfo.TimeZoneOverride.MinuteOffset) / 60.0)
 		}
 		//ats.ForecastTime = utime.Format("06:01:02 15:04")
 		ats.ForecastTime = utime.Add(time.Minute * time.Duration(ats.GmtOffset*60)).Format("06:01:02 15:04")
@@ -2821,11 +2845,11 @@ func (accuLocation PostalCodeResponse) GetWeatherForecastV2(category string, dev
 
 	// Loading the template file, which depends on the category
 	/*
-	body, err := ioutil.ReadFile(path.Join("/templates", templateFile))
-	if err != nil {
-		log.Printf(err.Error())
-		return err.Error()
-	}
+		body, err := ioutil.ReadFile(path.Join("/templates", templateFile))
+		if err != nil {
+			log.Printf(err.Error())
+			return err.Error()
+		}
 	*/
 	body, err := common.RedisInstance.GetCachedFile("/templates", templateFile, time.Hour)
 
@@ -2911,12 +2935,12 @@ func (accuLocation PostalCodeResponse) GetWeatherForecast(category string, devic
 	}
 
 	// Time Range to Disable Flow
-	if (weatherTime.DateTime.Month() < 9 || weatherTime.DateTime.Month() == 9 && weatherTime.DateTime.Day() < 20) {
+	if weatherTime.DateTime.Month() < 9 || weatherTime.DateTime.Month() == 9 && weatherTime.DateTime.Day() < 20 {
 		flow = DefaultModeFlowCommand
 	} else {
-		if (extendedInfo.HasDateTimeBug) {
+		if extendedInfo.HasDateTimeBug {
 			// Force Anonymous response to pre patched firmway
-			if (firmwareVersion == "") {
+			if firmwareVersion == "" {
 				return "<anonymous:true>"
 			}
 		}
@@ -2925,9 +2949,6 @@ func (accuLocation PostalCodeResponse) GetWeatherForecast(category string, devic
 	if strings.TrimSpace(accuLocation.Key) == "" {
 		return "Location Not found: (L3)"
 	}
-	
-
-
 
 	var apiResult interface{}
 	var templateFile string
@@ -2943,8 +2964,8 @@ func (accuLocation PostalCodeResponse) GetWeatherForecast(category string, devic
 		ats.DateStr = weatherTime.LocalDate
 		ats.TimeStr = weatherTime.LocalTime
 		ats.GmtOffset = accuLocation.TimeZone.GmtOffset
-		if (extendedInfo.TimeZoneOverride.Enabled) {
-			ats.GmtOffset = float64(extendedInfo.TimeZoneOverride.Sign * extendedInfo.TimeZoneOverride.HourOffset) + (float64(extendedInfo.TimeZoneOverride.MinuteOffset) / 60.0)
+		if extendedInfo.TimeZoneOverride.Enabled {
+			ats.GmtOffset = float64(extendedInfo.TimeZoneOverride.Sign*extendedInfo.TimeZoneOverride.HourOffset) + (float64(extendedInfo.TimeZoneOverride.MinuteOffset) / 60.0)
 		}
 		apiResult = ats
 		templateFile = "templateDatastreams"
@@ -2968,8 +2989,8 @@ func (accuLocation PostalCodeResponse) GetWeatherForecast(category string, devic
 			ats.DateStr = weatherTime.LocalDate
 			ats.TimeStr = weatherTime.LocalTime
 			ats.GmtOffset = accuLocation.TimeZone.GmtOffset
-			if (extendedInfo.TimeZoneOverride.Enabled) {
-				ats.GmtOffset = float64(extendedInfo.TimeZoneOverride.Sign * extendedInfo.TimeZoneOverride.HourOffset) + (float64(extendedInfo.TimeZoneOverride.MinuteOffset) / 60.0)
+			if extendedInfo.TimeZoneOverride.Enabled {
+				ats.GmtOffset = float64(extendedInfo.TimeZoneOverride.Sign*extendedInfo.TimeZoneOverride.HourOffset) + (float64(extendedInfo.TimeZoneOverride.MinuteOffset) / 60.0)
 			}
 			apiResult = ats
 			templateFile = "templateCat1"
@@ -2987,8 +3008,8 @@ func (accuLocation PostalCodeResponse) GetWeatherForecast(category string, devic
 			ats.DateStr = weatherTime.LocalDate
 			ats.TimeStr = weatherTime.LocalTime
 			ats.GmtOffset = accuLocation.TimeZone.GmtOffset
-			if (extendedInfo.TimeZoneOverride.Enabled) {
-				ats.GmtOffset = float64(extendedInfo.TimeZoneOverride.Sign * extendedInfo.TimeZoneOverride.HourOffset) + (float64(extendedInfo.TimeZoneOverride.MinuteOffset) / 60.0)
+			if extendedInfo.TimeZoneOverride.Enabled {
+				ats.GmtOffset = float64(extendedInfo.TimeZoneOverride.Sign*extendedInfo.TimeZoneOverride.HourOffset) + (float64(extendedInfo.TimeZoneOverride.MinuteOffset) / 60.0)
 			}
 			apiResult = ats
 			templateFile = "templateCat2"
@@ -3025,8 +3046,8 @@ func (accuLocation PostalCodeResponse) GetWeatherForecast(category string, devic
 			ats.TimeStr = weatherTime.LocalTime
 			utime := time.Unix(int64(accu24hForecast[i-12].EpochDateTime), 0)
 			ats.GmtOffset = accuLocation.TimeZone.GmtOffset
-			if (extendedInfo.TimeZoneOverride.Enabled) {
-				ats.GmtOffset = float64(extendedInfo.TimeZoneOverride.Sign * extendedInfo.TimeZoneOverride.HourOffset) + (float64(extendedInfo.TimeZoneOverride.MinuteOffset) / 60.0)
+			if extendedInfo.TimeZoneOverride.Enabled {
+				ats.GmtOffset = float64(extendedInfo.TimeZoneOverride.Sign*extendedInfo.TimeZoneOverride.HourOffset) + (float64(extendedInfo.TimeZoneOverride.MinuteOffset) / 60.0)
 			}
 			//ats.ForecastTime = utime.Format("06:01:02 15:04")
 			ats.ForecastTime = utime.Add(time.Minute * time.Duration(ats.GmtOffset*60)).Format("06:01:02 15:04")
@@ -3038,11 +3059,11 @@ func (accuLocation PostalCodeResponse) GetWeatherForecast(category string, devic
 
 	// Loading the template file, which depends on the category
 	/*
-	body, err := ioutil.ReadFile(path.Join("/templates", templateFile))
-	if err != nil {
-		log.Printf(err.Error())
-		return err.Error()
-	}
+		body, err := ioutil.ReadFile(path.Join("/templates", templateFile))
+		if err != nil {
+			log.Printf(err.Error())
+			return err.Error()
+		}
 	*/
 	body, err := common.RedisInstance.GetCachedFile("/templates", templateFile, time.Hour)
 
@@ -3090,11 +3111,9 @@ func (accuLocation PostalCodeResponse) GetWeatherForecast(category string, devic
 	return fc
 }
 
-
 //==============================================
 // Functions
 //==============================================
-
 
 //----------------------------------------------
 // @GetLocationFromPC
@@ -3112,22 +3131,21 @@ func GetLocationFromPC(accuPostalCode string) (PostalCodeResponse, error) {
 		postalCodeResponse := PostalCodeResponse{}
 		err := json.Unmarshal(data, &postalCodeResponse)
 		if err != nil {
-			log.Printf("Ummarshable - Purging Cache %s", pckey);
+			log.Printf("Ummarshable - Purging Cache %s", pckey)
 			//common.RedisInstance.RemoveKeyFromCache(pckey);
 			return PostalCodeResponse{}, err
 		}
 
 		if strings.TrimSpace(postalCodeResponse.Key) == "" && postalCodeResponse.Code == "ServiceUnavailable" {
 			// Temporary
-			log.Printf("TEMPORARY - Purging Cache %s", pckey);
-			common.RedisInstance.RemoveKeyFromCache(pckey);
+			log.Printf("TEMPORARY - Purging Cache %s", pckey)
+			common.RedisInstance.RemoveKeyFromCache(pckey)
 		}
 
 		if strings.TrimSpace(postalCodeResponse.Key) == "" && postalCodeResponse.Code == "" {
-			log.Printf("TEMPORARY - Purging Empty Cache %s", pckey);
-			common.RedisInstance.RemoveKeyFromCache(pckey);
+			log.Printf("TEMPORARY - Purging Empty Cache %s", pckey)
+			common.RedisInstance.RemoveKeyFromCache(pckey)
 		}
-
 
 		return postalCodeResponse, nil
 
@@ -3188,23 +3206,21 @@ func GetLocation(postalCode string, countryCode string) (PostalCodeResponse, err
 		postalCodeResponse := PostalCodeResponse{}
 		err := json.Unmarshal(data, &postalCodeResponse)
 		if err != nil {
-			log.Printf("Ummarshable - Purging Cache %s", zipkey);
+			log.Printf("Ummarshable - Purging Cache %s", zipkey)
 			//common.RedisInstance.RemoveKeyFromCache(zipkey);
 			return PostalCodeResponse{}, err
 		}
 
 		if strings.TrimSpace(postalCodeResponse.Key) == "" && postalCodeResponse.Code == "ServiceUnavailable" {
 			// Temporary
-			log.Printf("TEMPORARY - Purging Cache %s", zipkey);
-			common.RedisInstance.RemoveKeyFromCache(zipkey);
+			log.Printf("TEMPORARY - Purging Cache %s", zipkey)
+			common.RedisInstance.RemoveKeyFromCache(zipkey)
 		}
 
 		if strings.TrimSpace(postalCodeResponse.Key) == "" && postalCodeResponse.Code == "" {
-			log.Printf("TEMPORARY - Purging Empty Cache %s", zipkey);
-			common.RedisInstance.RemoveKeyFromCache(zipkey);
+			log.Printf("TEMPORARY - Purging Empty Cache %s", zipkey)
+			common.RedisInstance.RemoveKeyFromCache(zipkey)
 		}
-
-
 
 		if strings.TrimSpace(postalCodeResponse.Key) == "" {
 			return PostalCodeResponse{}, err
@@ -3319,7 +3335,7 @@ func SearchAllLocationsPerCountry(postalCode string, countryCode string) ([]byte
 		locationList := make([]LocationLookupResponse, 0)
 		for _, pcr := range pc {
 			llr := LocationLookupResponse{}
-			llr.CityName = pcr.LocalizedName     
+			llr.CityName = pcr.LocalizedName
 			llr.CountryCode = pcr.Country.ID
 			llr.AcwKey = pcr.Key
 			llr.AdministrativeArea = pcr.AdministrativeArea.ID
@@ -3484,7 +3500,6 @@ func NullableQueryAccuHourForecastAPI(locationKey string, period string, weather
 	return accuForecast
 }
 
-
 //----------------------------------------------
 // Day api forecast query to Accuweather
 //----------------------------------------------
@@ -3555,7 +3570,6 @@ func JsonQueryAccuDayForecastAPI(locationKey string, timeZone string, period str
 	return getNullableDailyForecast(locationKey, timeZone, period, weatherTime)
 }
 
-
 //----------------------------------------------
 //
 //----------------------------------------------
@@ -3584,15 +3598,13 @@ func GetLocalDateAndHourV2(timeZone string, extendedInfo *device.ExtendedDeviceI
 	//set Location
 	baseTime := time.Now()
 
-
-
 	// 1. Apply Time Acceleration Option
 	if extendedInfo.TimeCompression.Enabled {
 		t := baseTime.Unix()
-        elapsed := t -  extendedInfo.TimeCompression.StartTime
+		elapsed := t - extendedInfo.TimeCompression.StartTime
 		adjusted := float64(elapsed) * extendedInfo.TimeCompression.AccelerationRate
-        final := extendedInfo.TimeCompression.StartTime + int64(adjusted) + extendedInfo.TimeCompression.TimeOffset
-        baseTime = time.Unix(final, 0)
+		final := extendedInfo.TimeCompression.StartTime + int64(adjusted) + extendedInfo.TimeCompression.TimeOffset
+		baseTime = time.Unix(final, 0)
 	}
 
 	nowLocal := baseTime.In(loc)
@@ -3600,21 +3612,21 @@ func GetLocalDateAndHourV2(timeZone string, extendedInfo *device.ExtendedDeviceI
 	// 2. Apply Looping Constraint
 	if extendedInfo.TimeLoop.Enabled {
 		// Apply Offset if any
-		nowLocal = nowLocal.Add( time.Duration(int64(time.Second) * extendedInfo.TimeLoop.LoopOffset))
+		nowLocal = nowLocal.Add(time.Duration(int64(time.Second) * extendedInfo.TimeLoop.LoopOffset))
 
 		switch extendedInfo.TimeLoop.Mode {
 
 		case device.TimeLoopSeptemberOctober:
-			rangeStart :=  time.Date(nowLocal.Year(), 9, 15, 23, 45, 0, 0, loc)
-			rangeEnd :=  time.Date(nowLocal.Year() + 1, 3, 15, 0, 15, 0, 0, loc)
+			rangeStart := time.Date(nowLocal.Year(), 9, 15, 23, 45, 0, 0, loc)
+			rangeEnd := time.Date(nowLocal.Year()+1, 3, 15, 0, 15, 0, 0, loc)
 			elapsed := nowLocal.Sub(rangeStart)
 			interval := rangeEnd.Sub(rangeStart)
 			delta := elapsed % interval
 			nowLocal = rangeStart.Add(delta)
 
 		case device.TimeLoopDecemberJanuary:
-			rangeStart :=  time.Date(nowLocal.Year(), 12, 31, 23, 45, 0, 0, loc)
-			rangeEnd :=  time.Date(nowLocal.Year() + 1, 1, 1, 0, 15, 0, 0, loc)
+			rangeStart := time.Date(nowLocal.Year(), 12, 31, 23, 45, 0, 0, loc)
+			rangeEnd := time.Date(nowLocal.Year()+1, 1, 1, 0, 15, 0, 0, loc)
 			elapsed := nowLocal.Sub(rangeStart)
 			interval := rangeEnd.Sub(rangeStart)
 			delta := elapsed % interval
@@ -3627,7 +3639,7 @@ func GetLocalDateAndHourV2(timeZone string, extendedInfo *device.ExtendedDeviceI
 
 		case device.TimeLoopCustom:
 			rangeStart := time.Unix(extendedInfo.TimeLoop.LoopStart, 0)
-			rangeEnd :=  time.Unix(extendedInfo.TimeLoop.LoopEnd, 0)
+			rangeEnd := time.Unix(extendedInfo.TimeLoop.LoopEnd, 0)
 			elapsed := nowLocal.Sub(rangeStart)
 			interval := rangeEnd.Sub(rangeStart)
 			delta := elapsed % interval
@@ -3638,9 +3650,7 @@ func GetLocalDateAndHourV2(timeZone string, extendedInfo *device.ExtendedDeviceI
 		}
 	}
 
-
 	weatherTime.DateTime = nowLocal
-
 
 	// Getting the hour in that timezone
 	localHour, _ := strconv.Atoi(nowLocal.Format("15"))
@@ -3682,11 +3692,9 @@ func Round(x float64) int {
 	return int(t)
 }
 
-
 //----------------------------------------------
 // Local Funcs
 //----------------------------------------------
-
 
 //----------------------------------------------
 //
@@ -3760,7 +3768,9 @@ func getNullableDailyForecast(locationKey string, timeZone string, period string
 
 	retryCount := 0
 	err = json.Unmarshal(data, &response)
-	if err != nil {log.Printf("Json Error raised %v", err)}
+	if err != nil {
+		log.Printf("Json Error raised %v", err)
+	}
 	for len(response.DailyForecasts) == 0 && retryCount < MaxRetries {
 		// @TODO Note this logic may result in many processes slamming Accuweather at once.
 		retryCount = retryCount + 1
@@ -3768,11 +3778,15 @@ func getNullableDailyForecast(locationKey string, timeZone string, period string
 		time.Sleep(time.Duration(retryCount) * time.Second)
 		data, _ = httpAccuGetAndCache(path, key, ForecastExpireHours*time.Hour)
 		err = json.Unmarshal(data, &response)
-		if err != nil {log.Printf("Json Error raised %v", err)}
+		if err != nil {
+			log.Printf("Json Error raised %v", err)
+		}
 	}
 
 	if len(response.DailyForecasts) == 0 {
-		if err == nil {err = errors.New("incomplete data")}
+		if err == nil {
+			err = errors.New("incomplete data")
+		}
 		return response, err
 	}
 
@@ -3781,7 +3795,6 @@ func getNullableDailyForecast(locationKey string, timeZone string, period string
 	} else {
 		response.Today = &response.DailyForecasts[0].Night
 	}
-
 
 	// Populate Air and Pollen Map
 	for index, forecast := range response.DailyForecasts {
@@ -3799,8 +3812,6 @@ func getNullableDailyForecast(locationKey string, timeZone string, period string
 
 	return response, err
 }
-
-
 
 //----------------------------------------------
 //
@@ -3826,7 +3837,6 @@ func getNWSInfo(zip string) map[string]string {
 	}
 	return severeComponentMap
 }
-
 
 //----------------------------------------------
 //
@@ -3923,14 +3933,13 @@ func NullablequeryAccuCurrentForecastAPI(locationKey string, weatherTime Weather
 		log.Printf("Could not correctly fetch the weather forecast, retry number : %s", retryCount)
 		time.Sleep(time.Duration(retryCount) * time.Second)
 
-
 		data, _ = httpAccuGetAndCache(path, key, 3*time.Hour)
 		err = json.Unmarshal(data, &accuCurrentForecastResponse)
 	}
 
 	if len(accuCurrentForecastResponse) > 0 {
 		// Adapter: Hail & Tornado Probability
-		if accuCurrentForecastResponse != nil{
+		if accuCurrentForecastResponse != nil {
 			// @todo deal with parse failure.
 			// Hail Probability
 			if val, ok := nws["hail"]; ok {
@@ -3946,7 +3955,7 @@ func NullablequeryAccuCurrentForecastAPI(locationKey string, weatherTime Weather
 				if ok {
 					p, e := strconv.Atoi(val)
 					if e == nil {
-						accuCurrentForecastResponse[0].TornadoProbability= null.NewInt(int64(p), true)
+						accuCurrentForecastResponse[0].TornadoProbability = null.NewInt(int64(p), true)
 					}
 				}
 			}
@@ -3958,8 +3967,6 @@ func NullablequeryAccuCurrentForecastAPI(locationKey string, weatherTime Weather
 		return nullResponse, err
 	}
 }
-
-
 
 //----------------------------------------------
 //

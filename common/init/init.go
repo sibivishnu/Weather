@@ -1,4 +1,4 @@
-package common_init
+package init
 
 //----------------------------------------------
 // CopyRight 2019 La Crosse Technology, LTD.
@@ -8,31 +8,34 @@ package common_init
 // Imports
 //----------------------------------------------
 import (
-	common "../../common"
-	cache "../cache"
-	"../const/device"
-	"../providers/weather_api"
-	"log"
-	"github.com/go-redis/redis"
-	"time"
-	"golang.org/x/net/context"
 	"cloud.google.com/go/datastore"
+	"github.com/go-redis/redis"
+
+	//	cache "github.com/sibivishnu/Weather/cacheUpdater"
+	"log"
+	"time"
+
+	"github.com/sibivishnu/Weather/common"
+	common "github.com/sibivishnu/Weather/common"
+	cache "github.com/sibivishnu/Weather/common/cache"
+	"github.com/sibivishnu/Weather/common/const/device"
+	"github.com/sibivishnu/Weather/common/providers/weather_api"
+	"golang.org/x/net/context"
 )
 
-//----------------------------------------------
+// ----------------------------------------------
 // Global Variables
-//----------------------------------------------
+// ----------------------------------------------
 var (
-	redisClient    *redis.Client
+	redisClient *redis.Client
 )
 
-//----------------------------------------------
+// ----------------------------------------------
 // Exports
-//----------------------------------------------
+// ----------------------------------------------
 func LoadCommonEnvironment(options map[string]interface{}) error {
 	var v interface{}
 	var ok bool
-
 
 	//=============================================
 	// Initialize Common
@@ -52,7 +55,7 @@ func LoadCommonEnvironment(options map[string]interface{}) error {
 	}
 
 	if v, ok = options["redis.db"]; ok {
-		redisDB= v.(int)
+		redisDB = v.(int)
 	}
 
 	common.RedisClient = cache.SetupRedis(&redisHost, &redisPassword, redisDB)
@@ -61,7 +64,7 @@ func LoadCommonEnvironment(options map[string]interface{}) error {
 	// 2. Setup DataStore Client
 	common.CTX = context.Background()
 	if v, ok = options["datastore.project"]; ok {
-		common.DataStoreClient, _ = datastore.NewClient(common.CTX,  v.(string))
+		common.DataStoreClient, _ = datastore.NewClient(common.CTX, v.(string))
 	} else {
 		log.Printf("[Common] Options should include datastore.project entry")
 	}

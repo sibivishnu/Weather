@@ -1,4 +1,4 @@
-package legacy_const_firmware
+package legacy_firmware
 
 //================================================================
 //================================================================
@@ -59,5 +59,3 @@ const (
 	WeatherCategoryPossibly      = WeatherCategoryLow
 	WeatherCategoryVeryUnlikely  = WeatherCategoryLow
 )
-
-

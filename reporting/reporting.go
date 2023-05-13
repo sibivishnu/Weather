@@ -1,11 +1,12 @@
 package main
 
 import (
-	"../common/const/device"
+	//	"../common/const/device"
 	"bytes"
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
+	"github.com/sibivishnu/Weather/common/const/device"
 	"html/template"
 	"io/ioutil"
 	"log"

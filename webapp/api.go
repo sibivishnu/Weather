@@ -4,16 +4,16 @@ package main
 // Packages
 //----------------------------------------------
 import (
-	"../common"
-	"../common/cache"
-	"../common/const/device"
-	"../common/providers/weather_api"
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"github.com/gorilla/mux"
+	"github.com/sibivishnu/Weather/common"
+	"github.com/sibivishnu/Weather/common/cache"
+	"github.com/sibivishnu/Weather/common/const/device"
+	"github.com/sibivishnu/Weather/common/providers/weather_api"
 	"gopkg.in/guregu/null.v3"
 	"io"
 	"io/ioutil"
@@ -31,17 +31,17 @@ import (
 // Type Definitions
 //==============================================
 
-//----------------------------------------------
+// ----------------------------------------------
 // @ReplyMessage
-//----------------------------------------------
+// ----------------------------------------------
 type ReplyMessage struct {
 	Code    int         `json:"code"`
 	Message interface{} `json:"message"`
 }
 
-//----------------------------------------------
+// ----------------------------------------------
 // @AdminResponse
-//----------------------------------------------
+// ----------------------------------------------
 type AdminResponse struct {
 	Zip         string `json:"zip"`
 	City        string `json:"city"`
@@ -50,9 +50,9 @@ type AdminResponse struct {
 	Forecast    string `json:"forecast"`
 }
 
-//----------------------------------------------
+// ----------------------------------------------
 // @AdminResponseV2
-//----------------------------------------------
+// ----------------------------------------------
 type AdminResponseV2 struct {
 	Geo         device.Geo
 	Location    weather_api.PostalCodeResponse
@@ -67,8 +67,6 @@ type AdminResponseFormatV1p2 struct {
 	Forecast    weather_api.ApiResponseInterface
 }
 
-
-
 type AdminResponseFormatV1p3 struct {
 	Geo         device.Geo
 	Location    weather_api.PostalCodeResponse
@@ -77,15 +75,15 @@ type AdminResponseFormatV1p3 struct {
 }
 
 type LastUpdated struct {
-	OneDayForecast null.String
-	CurrentForecast null.String
-	TenDayForecast null.String
+	OneDayForecast         null.String
+	CurrentForecast        null.String
+	TenDayForecast         null.String
 	TwentyFourHourForecast null.String
 }
 
-//----------------------------------------------
+// ----------------------------------------------
 // @DeviceLocation
-//----------------------------------------------
+// ----------------------------------------------
 type DeviceLocation struct {
 	CountryCode      string `json:"country_code"`
 	PostalCode       string `json:"postal_code"`
@@ -93,10 +91,9 @@ type DeviceLocation struct {
 	ACWKey           string `json:"acw_key"`
 }
 
-
-//==============================================
+// ==============================================
 // Protocols
-//==============================================
+// ==============================================
 func (s AdminResponseV2) JsonResponse(version string) (string, error) {
 	switch version {
 	case "1.1e":
@@ -160,7 +157,6 @@ func (s AdminResponseV2) JsonResponse(version string) (string, error) {
 		var j, err = json.Marshal(response)
 		return string(j), err
 
-
 	case "1.5e":
 		fallthrough
 	case "1.5":
@@ -179,7 +175,6 @@ func (s AdminResponseV2) JsonResponse(version string) (string, error) {
 		var j, err = json.Marshal(response)
 		return string(j), err
 
-
 	//var out bytes.Buffer
 	//json.Indent(&out, j, "", "  ")
 	//return string(out.Bytes()), err
@@ -188,15 +183,14 @@ func (s AdminResponseV2) JsonResponse(version string) (string, error) {
 	}
 }
 
-
 //==============================================
 // Functions - Api Actions
 //==============================================
 
-//----------------------------------------------
+// ----------------------------------------------
 // @actionGetForecastData
 // [GET] /api/v1.1/forecast/id/{id}
-//----------------------------------------------
+// ----------------------------------------------
 func actionGetForecastData(rw http.ResponseWriter, r *http.Request) {
 	var res string
 	vars := mux.Vars(r)
@@ -220,7 +214,7 @@ func actionGetForecastData(rw http.ResponseWriter, r *http.Request) {
 		io.WriteString(rw, "device not found")
 		return
 	}
-	
+
 	// HMAC digest check
 	err = hmacCheck(r, display.PSK)
 	if err != nil {
@@ -237,7 +231,7 @@ func actionGetForecastData(rw http.ResponseWriter, r *http.Request) {
 	// Load Location Information
 	var location weather_api.PostalCodeResponse
 	location, err = getDeviceLocation(display)
-	if err!= nil {
+	if err != nil {
 		//res = "Location " + display.Geo.ACWKey + "|" + display.Geo.Zip + " : " + display.Geo.CountryCode + " Not found"
 		log.Printf("Location %s,%s,%s not found, device : %s", display.Geo.ACWKey, display.Geo.Zip, display.Geo.CountryCode, deviceID)
 		log.Printf(err.Error())
@@ -262,10 +256,10 @@ func actionGetForecastData(rw http.ResponseWriter, r *http.Request) {
 	io.WriteString(rw, res)
 }
 
-//----------------------------------------------
+// ----------------------------------------------
 // @actionGetForecastDataVer2
 // [GET] /api/v2.0/forecast/id/{id}
-//----------------------------------------------
+// ----------------------------------------------
 func actionGetForecastDataVer2(rw http.ResponseWriter, r *http.Request) {
 	var res string
 	vars := mux.Vars(r)
@@ -294,11 +288,6 @@ func actionGetForecastDataVer2(rw http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		io.WriteString(rw, err.Error())
 
-
-
-
-
-
 		return
 	}
 
@@ -311,7 +300,7 @@ func actionGetForecastDataVer2(rw http.ResponseWriter, r *http.Request) {
 	// Load Location Information
 	var location weather_api.PostalCodeResponse
 	location, err = getDeviceLocation(display)
-	if err!= nil {
+	if err != nil {
 		//res = "Location " + display.Geo.ACWKey + "|" + display.Geo.Zip + " : " + display.Geo.CountryCode + " Not found"
 		log.Printf("Location %s,%s,%s not found, device : %s", display.Geo.ACWKey, display.Geo.Zip, display.Geo.CountryCode, deviceID)
 		log.Printf(err.Error())
@@ -336,10 +325,10 @@ func actionGetForecastDataVer2(rw http.ResponseWriter, r *http.Request) {
 	io.WriteString(rw, res)
 }
 
-//----------------------------------------------
+// ----------------------------------------------
 // @actionGetForecastDataJson - nullable support with json payload.
 // [GET] /api/v2.2/forecast/id/{id}
-//----------------------------------------------
+// ----------------------------------------------
 func actionGetForecastDataJson(rw http.ResponseWriter, r *http.Request) {
 	var res string
 	vars := mux.Vars(r)
@@ -352,7 +341,6 @@ func actionGetForecastDataJson(rw http.ResponseWriter, r *http.Request) {
 	firmwareVersion := strings.TrimSpace(r.FormValue("fw"))
 	callSubVersion := strings.TrimSpace(r.FormValue("v"))
 	i8nSet := strings.TrimSpace(r.FormValue("i8nV"))
-
 
 	// 1. Check for unsupported devices
 	if !supportedDevice(deviceID) {
@@ -371,7 +359,7 @@ func actionGetForecastDataJson(rw http.ResponseWriter, r *http.Request) {
 	// HMAC digest check
 	err = hmacCheck(r, display.PSK)
 	if err != nil {
-		io.WriteString(rw, "{\"anonymous\": true, \"error\": true, \"msg\": \"" + err.Error() + "\"}")
+		io.WriteString(rw, "{\"anonymous\": true, \"error\": true, \"msg\": \""+err.Error()+"\"}")
 		return
 	}
 
@@ -384,7 +372,7 @@ func actionGetForecastDataJson(rw http.ResponseWriter, r *http.Request) {
 	// Load Location Information
 	var location weather_api.PostalCodeResponse
 	location, err = getDeviceLocation(display)
-	if err!= nil {
+	if err != nil {
 		//res = "Location " + display.Geo.ACWKey + "|" + display.Geo.Zip + " : " + display.Geo.CountryCode + " Not found"
 		log.Printf("Location %s,%s,%s not found, device : %s", display.Geo.ACWKey, display.Geo.Zip, display.Geo.CountryCode, deviceID)
 		log.Printf(err.Error())
@@ -422,11 +410,10 @@ func actionGetForecastDataJson(rw http.ResponseWriter, r *http.Request) {
 	io.WriteString(rw, res)
 }
 
-
-//----------------------------------------------
+// ----------------------------------------------
 // @actionGetHourlyForecastDataJson - nullable support with json payload.
 // [GET] /api/v2.3/forecast/id/{id}/hourly
-//----------------------------------------------
+// ----------------------------------------------
 func actionGetHourlyForecastDataJson(rw http.ResponseWriter, r *http.Request) {
 	var res string
 	vars := mux.Vars(r)
@@ -439,7 +426,6 @@ func actionGetHourlyForecastDataJson(rw http.ResponseWriter, r *http.Request) {
 	firmwareVersion := strings.TrimSpace(r.FormValue("fw"))
 	callSubVersion := strings.TrimSpace(r.FormValue("v"))
 	i8nSet := strings.TrimSpace(r.FormValue("i8nV"))
-
 
 	// 1. Check for unsupported devices
 	if !supportedDevice(deviceID) {
@@ -458,7 +444,7 @@ func actionGetHourlyForecastDataJson(rw http.ResponseWriter, r *http.Request) {
 	// HMAC digest check
 	err = hmacCheck(r, display.PSK)
 	if err != nil {
-		io.WriteString(rw, "{\"anonymous\": true, \"error\": true, \"msg\": \"" + err.Error() + "\"}")
+		io.WriteString(rw, "{\"anonymous\": true, \"error\": true, \"msg\": \""+err.Error()+"\"}")
 		return
 	}
 
@@ -471,7 +457,7 @@ func actionGetHourlyForecastDataJson(rw http.ResponseWriter, r *http.Request) {
 	// Load Location Information
 	var location weather_api.PostalCodeResponse
 	location, err = getDeviceLocation(display)
-	if err!= nil {
+	if err != nil {
 		//res = "Location " + display.Geo.ACWKey + "|" + display.Geo.Zip + " : " + display.Geo.CountryCode + " Not found"
 		log.Printf("Location %s,%s,%s not found, device : %s", display.Geo.ACWKey, display.Geo.Zip, display.Geo.CountryCode, deviceID)
 		log.Printf(err.Error())
@@ -495,7 +481,7 @@ func actionGetHourlyForecastDataJson(rw http.ResponseWriter, r *http.Request) {
 	if testOverride(deviceID) {
 		res, _ = location.NullableGetWeatherForecastJsonExtended(display.Category, display.ID, firmwareVersion, callSubVersion, false, false, true, false).JsonResponse(version)
 	} else {
-		res, _ = location.NullableGetWeatherForecastJsonExtended(display.Category, display.ID, firmwareVersion, callSubVersion, false,false, true, false).JsonResponse(version)
+		res, _ = location.NullableGetWeatherForecastJsonExtended(display.Category, display.ID, firmwareVersion, callSubVersion, false, false, true, false).JsonResponse(version)
 	}
 
 	// Update Device Request Details
@@ -508,11 +494,10 @@ func actionGetHourlyForecastDataJson(rw http.ResponseWriter, r *http.Request) {
 	io.WriteString(rw, res)
 }
 
-
-//----------------------------------------------
+// ----------------------------------------------
 // @actionGetDailyForecastDataJson - nullable support with json payload.
 // [GET] /api/v2.3/forecast/id/{id}/hourly
-//----------------------------------------------
+// ----------------------------------------------
 func actionGetDailyForecastDataJson(rw http.ResponseWriter, r *http.Request) {
 	var res string
 	vars := mux.Vars(r)
@@ -525,7 +510,6 @@ func actionGetDailyForecastDataJson(rw http.ResponseWriter, r *http.Request) {
 	firmwareVersion := strings.TrimSpace(r.FormValue("fw"))
 	callSubVersion := strings.TrimSpace(r.FormValue("v"))
 	i8nSet := strings.TrimSpace(r.FormValue("i8nV"))
-
 
 	// 1. Check for unsupported devices
 	if !supportedDevice(deviceID) {
@@ -544,7 +528,7 @@ func actionGetDailyForecastDataJson(rw http.ResponseWriter, r *http.Request) {
 	// HMAC digest check
 	err = hmacCheck(r, display.PSK)
 	if err != nil {
-		io.WriteString(rw, "{\"anonymous\": true, \"error\": true, \"msg\": \"" + err.Error() + "\"}")
+		io.WriteString(rw, "{\"anonymous\": true, \"error\": true, \"msg\": \""+err.Error()+"\"}")
 		return
 	}
 
@@ -557,7 +541,7 @@ func actionGetDailyForecastDataJson(rw http.ResponseWriter, r *http.Request) {
 	// Load Location Information
 	var location weather_api.PostalCodeResponse
 	location, err = getDeviceLocation(display)
-	if err!= nil {
+	if err != nil {
 		//res = "Location " + display.Geo.ACWKey + "|" + display.Geo.Zip + " : " + display.Geo.CountryCode + " Not found"
 		log.Printf("Location %s,%s,%s not found, device : %s", display.Geo.ACWKey, display.Geo.Zip, display.Geo.CountryCode, deviceID)
 		log.Printf(err.Error())
@@ -579,9 +563,9 @@ func actionGetDailyForecastDataJson(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	if testOverride(deviceID) {
-		res, _ = location.NullableGetWeatherForecastJsonExtended(display.Category, display.ID, firmwareVersion, callSubVersion, false,true, false, true).JsonResponse(version)
+		res, _ = location.NullableGetWeatherForecastJsonExtended(display.Category, display.ID, firmwareVersion, callSubVersion, false, true, false, true).JsonResponse(version)
 	} else {
-		res, _ = location.NullableGetWeatherForecastJsonExtended(display.Category, display.ID, firmwareVersion, callSubVersion, false,true, false, true).JsonResponse(version)
+		res, _ = location.NullableGetWeatherForecastJsonExtended(display.Category, display.ID, firmwareVersion, callSubVersion, false, true, false, true).JsonResponse(version)
 	}
 
 	// Update Device Request Details
@@ -594,10 +578,10 @@ func actionGetDailyForecastDataJson(rw http.ResponseWriter, r *http.Request) {
 	io.WriteString(rw, res)
 }
 
-//----------------------------------------------
+// ----------------------------------------------
 // @actionGetTestForecastData
 // [GET] /api/v2.0/forecast/test/id/{id}
-//----------------------------------------------
+// ----------------------------------------------
 // API for test device forecast data see ticket https://github.com/lacrossetech/weather-service/issues/16
 func actionGetTestForecastData(rw http.ResponseWriter, r *http.Request) {
 	var res string
@@ -634,7 +618,7 @@ func actionGetTestForecastData(rw http.ResponseWriter, r *http.Request) {
 	// Load Location Information
 	var location weather_api.PostalCodeResponse
 	location, err = getDeviceLocation(display)
-	if err!= nil {
+	if err != nil {
 		//res = "Location " + display.Geo.ACWKey + "|" + display.Geo.Zip + " : " + display.Geo.CountryCode + " Not found"
 		log.Printf("Location %s,%s,%s not found, device : %s", display.Geo.ACWKey, display.Geo.Zip, display.Geo.CountryCode, deviceID)
 		log.Printf(err.Error())
@@ -649,10 +633,10 @@ func actionGetTestForecastData(rw http.ResponseWriter, r *http.Request) {
 	io.WriteString(rw, res)
 }
 
-//----------------------------------------------
+// ----------------------------------------------
 // @actionGetForecastDataStreams
 // [GET] /api/v1.1/forecast/data-streams/id/{id}
-//----------------------------------------------
+// ----------------------------------------------
 func actionGetForecastDataStreams(rw http.ResponseWriter, r *http.Request) {
 	var res string
 	vars := mux.Vars(r)
@@ -693,7 +677,7 @@ func actionGetForecastDataStreams(rw http.ResponseWriter, r *http.Request) {
 	// Load Location Information
 	var location weather_api.PostalCodeResponse
 	location, err = getDeviceLocation(display)
-	if err!= nil {
+	if err != nil {
 		// res = "Location " + display.Geo.ACWKey + "|" + display.Geo.Zip + " : " + display.Geo.CountryCode + " Not found"
 		log.Printf("Location %s,%s,%s not found, device : %s", display.Geo.ACWKey, display.Geo.Zip, display.Geo.CountryCode, deviceID)
 		log.Printf(err.Error())
@@ -705,11 +689,10 @@ func actionGetForecastDataStreams(rw http.ResponseWriter, r *http.Request) {
 	io.WriteString(rw, res)
 }
 
-
-//----------------------------------------------
+// ----------------------------------------------
 // @actionGetLocationByPostalCode
 // [GET] /api/v1.1/forecast/client/pc/{postal_code}/cc/{country_code}
-//----------------------------------------------
+// ----------------------------------------------
 func actionGetLocationByPostalCode(rw http.ResponseWriter, r *http.Request) {
 
 	if isTokenValid(r) == false {
@@ -732,10 +715,10 @@ func actionGetLocationByPostalCode(rw http.ResponseWriter, r *http.Request) {
 
 }
 
-//----------------------------------------------
+// ----------------------------------------------
 // @actionGetLocationByCityOrPostalCode
 // [GET] /api/v1.1/forecast/client/cityorpc/{pc_or_city}/cc/{country_code}
-//----------------------------------------------
+// ----------------------------------------------
 func actionGetLocationByCityOrPostalCode(rw http.ResponseWriter, r *http.Request) {
 
 	setResponseHeaders(&rw, r)
@@ -763,16 +746,14 @@ func actionGetLocationByCityOrPostalCode(rw http.ResponseWriter, r *http.Request
 
 }
 
-//----------------------------------------------
+// ----------------------------------------------
 // @actionSetDeviceLocation
 // [PUT,POST] /api/v1.1/forecast/client/location/device/{device_id}
-//----------------------------------------------
+// ----------------------------------------------
 func actionSetDeviceLocation(rw http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	deviceID := strings.TrimSpace(vars["device_id"])
-
-
 
 	if isTokenValid(r) == false {
 		sendApiOutcomeResponse(rw, http.StatusUnauthorized, errors.New("Wrong bearer token"))
@@ -853,11 +834,10 @@ func actionSetDeviceLocation(rw http.ResponseWriter, r *http.Request) {
 
 }
 
-
-//----------------------------------------------
+// ----------------------------------------------
 // @actionDisplayCheckPage
 // [GET] /
-//----------------------------------------------
+// ----------------------------------------------
 func actionDisplayCheckPage(rw http.ResponseWriter, r *http.Request) {
 	io.WriteString(rw, "OK")
 }
@@ -866,10 +846,10 @@ func actionDisplayCheckPage(rw http.ResponseWriter, r *http.Request) {
 // Functions - Admin Api Actions
 //==============================================
 
-//----------------------------------------------
+// ----------------------------------------------
 // @actionAdminGetForecastData
 // [GET] /api/v1.1/forecast/admin/id/{id}
-//----------------------------------------------
+// ----------------------------------------------
 func actionAdminGetForecastData(rw http.ResponseWriter, r *http.Request) {
 	setResponseHeaders(&rw, r)
 	if (*r).Method == "OPTIONS" {
@@ -896,14 +876,13 @@ func actionAdminGetForecastData(rw http.ResponseWriter, r *http.Request) {
 	// Load Location Information
 	var location weather_api.PostalCodeResponse
 	location, err = getDeviceLocation(display)
-	if err!= nil {
+	if err != nil {
 		log.Printf("Location %s,%s,%s not found, device : %s", display.Geo.ACWKey, display.Geo.Zip, display.Geo.CountryCode, deviceID)
 		log.Printf(err.Error())
 		log.Printf("Device: %+v\n", display)
 		return
 	}
 	res.Location = location.Key
-
 
 	// Update LastUpdate Field
 	res.LastUpdated, _ = forecastLastUpdatedString(display, location)
@@ -921,10 +900,10 @@ func actionAdminGetForecastData(rw http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(rw).Encode(res)
 }
 
-//----------------------------------------------
+// ----------------------------------------------
 // @actionAdminGetForecastDataVer2
 // [GET] /api/v2.0/forecast/admin/id/{id}
-//----------------------------------------------
+// ----------------------------------------------
 func actionAdminGetForecastDataVer2(rw http.ResponseWriter, r *http.Request) {
 	setResponseHeaders(&rw, r)
 	if (*r).Method == "OPTIONS" {
@@ -951,14 +930,13 @@ func actionAdminGetForecastDataVer2(rw http.ResponseWriter, r *http.Request) {
 	// Load Location Information
 	var location weather_api.PostalCodeResponse
 	location, err = getDeviceLocation(display)
-	if err!= nil {
+	if err != nil {
 		log.Printf("Location %s,%s,%s not found, device : %s", display.Geo.ACWKey, display.Geo.Zip, display.Geo.CountryCode, deviceID)
 		log.Printf(err.Error())
 		log.Printf("Device: %+v\n", display)
 		return
 	}
 	res.Location = location.Key
-
 
 	// Update LastUpdate Field
 	res.LastUpdated, _ = forecastLastUpdatedString(display, location)
@@ -977,10 +955,10 @@ func actionAdminGetForecastDataVer2(rw http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(rw).Encode(res)
 }
 
-//----------------------------------------------
+// ----------------------------------------------
 // @actionAdminGetForecastDataJson
 // [GET] /api/v2.2/forecast/admin/id/{id}
-//----------------------------------------------
+// ----------------------------------------------
 func actionAdminGetForecastDataJson(rw http.ResponseWriter, r *http.Request) {
 	setResponseHeaders(&rw, r)
 	if (*r).Method == "OPTIONS" {
@@ -1018,7 +996,7 @@ func actionAdminGetForecastDataJson(rw http.ResponseWriter, r *http.Request) {
 	// Load Location Information
 	var location weather_api.PostalCodeResponse
 	location, err = getDeviceLocation(display)
-	if err!= nil {
+	if err != nil {
 		log.Printf("Location %s,%s,%s not found, device : %s", display.Geo.ACWKey, display.Geo.Zip, display.Geo.CountryCode, deviceID)
 		log.Printf(err.Error())
 		log.Printf("Device: %+v\n", display)
@@ -1051,10 +1029,10 @@ func actionAdminGetForecastDataJson(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//----------------------------------------------
+// ----------------------------------------------
 // @actionAdminUpdateDeviceLocation
 // [PUT,POST] /api/v1.1/forecast/admin/location/device/{device_id}
-//----------------------------------------------
+// ----------------------------------------------
 func actionAdminUpdateDeviceLocation(rw http.ResponseWriter, r *http.Request) {
 	setResponseHeaders(&rw, r)
 	if (*r).Method == "OPTIONS" {
@@ -1078,10 +1056,10 @@ func actionAdminUpdateDeviceLocation(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//----------------------------------------------
+// ----------------------------------------------
 // @actionAdminGetCategoryRanges
 // [GET] /api/v1.1/forecast/admin/getRanges/WeatherService/{cat_type}
-//----------------------------------------------
+// ----------------------------------------------
 func actionAdminGetCategoryRanges(rw http.ResponseWriter, r *http.Request) {
 	setResponseHeaders(&rw, r)
 	if (*r).Method == "OPTIONS" {
@@ -1107,9 +1085,9 @@ func actionAdminGetCategoryRanges(rw http.ResponseWriter, r *http.Request) {
 // Functions - Support
 //==============================================
 
-//----------------------------------------------
+// ----------------------------------------------
 // @tapGatewayGeo
-//----------------------------------------------
+// ----------------------------------------------
 func tapGatewayGeo(deviceID string) {
 
 	geoRefreshLink := "https://ingv2.lacrossetechnology.com/api/v1.1/gateways/" + deviceID + "/displays/" + deviceID + "/geo"
@@ -1129,9 +1107,9 @@ func tapGatewayGeo(deviceID string) {
 
 }
 
-//----------------------------------------------
+// ----------------------------------------------
 // @sendApiOutcomeResponse
-//----------------------------------------------
+// ----------------------------------------------
 func sendApiOutcomeResponse(w http.ResponseWriter, code int, err error) {
 	w.WriteHeader(code)
 	res := ReplyMessage{}
@@ -1145,9 +1123,9 @@ func sendApiOutcomeResponse(w http.ResponseWriter, code int, err error) {
 	json.NewEncoder(w).Encode(res)
 }
 
-//----------------------------------------------
+// ----------------------------------------------
 // @deviceLocationUpdate
-//----------------------------------------------
+// ----------------------------------------------
 // This function should also be used by the handleDeviceLocationUpdate call
 func deviceLocationUpdate(r *http.Request, deviceID string) error {
 
@@ -1218,9 +1196,9 @@ func deviceLocationUpdate(r *http.Request, deviceID string) error {
 	return nil
 }
 
-//----------------------------------------------
+// ----------------------------------------------
 // @hmacCheck
-//----------------------------------------------
+// ----------------------------------------------
 func hmacCheck(r *http.Request, psk string) error {
 
 	// Build full request URL
@@ -1245,11 +1223,11 @@ func hmacCheck(r *http.Request, psk string) error {
 	return nil
 }
 
-//----------------------------------------------
+// ----------------------------------------------
 // @isTokenValid
 // Firebase token validation
 // We are expecting the token to be passed to Authorization header, on the format : "Barrear <Token>"
-//----------------------------------------------
+// ----------------------------------------------
 func isTokenValid(r *http.Request) bool {
 
 	valid := false
@@ -1276,9 +1254,9 @@ func isTokenValid(r *http.Request) bool {
 
 }
 
-//----------------------------------------------
+// ----------------------------------------------
 // @computeHmac
-//----------------------------------------------
+// ----------------------------------------------
 func computeHmac(message string, secret string) string {
 
 	key := []byte(secret)
@@ -1288,19 +1266,19 @@ func computeHmac(message string, secret string) string {
 	return base64.StdEncoding.EncodeToString(h.Sum(nil))
 }
 
-//----------------------------------------------
+// ----------------------------------------------
 // @setResponseHeaders
 // CORS validation
-//----------------------------------------------
+// ----------------------------------------------
 func setResponseHeaders(w *http.ResponseWriter, req *http.Request) {
 	(*w).Header().Set("Access-Control-Allow-Origin", "*")
 	(*w).Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	(*w).Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
 }
 
-//----------------------------------------------
+// ----------------------------------------------
 //
-//----------------------------------------------
+// ----------------------------------------------
 func supportedDevice(deviceId string) bool {
 	if strings.ToUpper(deviceId) == "2CF272" {
 		//Management requested exception case
@@ -1309,9 +1287,9 @@ func supportedDevice(deviceId string) bool {
 	return true
 }
 
-//----------------------------------------------
+// ----------------------------------------------
 //
-//----------------------------------------------
+// ----------------------------------------------
 func syncElixirBackend(display device.Device) {
 	// Tap Elixir Backend to ensure synchronization
 	if display.GeoRefreshCount >= 0 && display.GeoRefreshCount < weather_api.GEO_REFRESH_API_HIT_AMOUNT {
@@ -1323,9 +1301,9 @@ func syncElixirBackend(display device.Device) {
 	}
 }
 
-//----------------------------------------------
+// ----------------------------------------------
 //
-//----------------------------------------------
+// ----------------------------------------------
 func updateDevice(display device.Device) error {
 	key := "device:" + display.ID
 	dataBytes, _ := json.Marshal(display)
@@ -1333,9 +1311,9 @@ func updateDevice(display device.Device) error {
 	return redisInstance.SaveRedisData(dataBytes, key, 0)
 }
 
-//----------------------------------------------
+// ----------------------------------------------
 //
-//----------------------------------------------
+// ----------------------------------------------
 func testOverride(deviceId string) bool {
 	if deviceId == "2CFB3D" || deviceId == "6334DE" || deviceId == "63A252" || deviceId == "2D937D" || deviceId == "2DB9F8" || deviceId == "2D480E" || deviceId == "602750" {
 		return true
@@ -1344,9 +1322,9 @@ func testOverride(deviceId string) bool {
 	}
 }
 
-//----------------------------------------------
+// ----------------------------------------------
 //
-//----------------------------------------------
+// ----------------------------------------------
 func getDevice(deviceId string) (device.Device, bool, error) {
 	var d device.Device
 	key := "device:" + deviceId
@@ -1373,9 +1351,9 @@ func getDevice(deviceId string) (device.Device, bool, error) {
 	}
 }
 
-//----------------------------------------------
+// ----------------------------------------------
 //
-//----------------------------------------------
+// ----------------------------------------------
 func getDeviceLocation(display device.Device) (weather_api.PostalCodeResponse, error) {
 	if display.Geo.ACWKey != "" {
 		return weather_api.GetLocationFromPC(display.Geo.ACWKey)
@@ -1384,9 +1362,9 @@ func getDeviceLocation(display device.Device) (weather_api.PostalCodeResponse, e
 	}
 }
 
-//----------------------------------------------
+// ----------------------------------------------
 //
-//----------------------------------------------
+// ----------------------------------------------
 func updateDeviceRequestEntry(deviceId string) {
 	redisInstance := &cache.RedisInstance{RedisSession: common.RedisClient}
 	nowStr := time.Now().Format("02:01:2006 15:04:05")

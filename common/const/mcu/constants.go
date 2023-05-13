@@ -1,5 +1,4 @@
-package const_mcu
-
+package mcu
 
 //----------------------------------------------
 // Globals - Constants - Weather Icons

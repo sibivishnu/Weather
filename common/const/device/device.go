@@ -1,4 +1,5 @@
 package device
+
 //----------------------------------------------
 // CopyRight 2019 La Crosse Technology, LTD.
 //----------------------------------------------
@@ -7,11 +8,11 @@ package device
 // Imports
 //----------------------------------------------
 import (
-	"../../../common"
-	"../../cache"
 	"cloud.google.com/go/datastore"
 	"encoding/json"
 	"fmt"
+	"github.com/sibivishnu/Weather/common"
+	"github.com/sibivishnu/Weather/common/cache"
 	"io/ioutil"
 	"log"
 	"math"
@@ -19,16 +20,16 @@ import (
 	"time"
 )
 
-//----------------------------------------------
+// ----------------------------------------------
 // Globals
-//----------------------------------------------
+// ----------------------------------------------
 var (
 	Categories *CategoryConfList
 )
 
-//----------------------------------------------
+// ----------------------------------------------
 // Types
-//----------------------------------------------
+// ----------------------------------------------
 type (
 	CategoryConf struct {
 		Category string          `bson:"category" json:"category"`
@@ -55,74 +56,72 @@ type (
 	}
 
 	TimeLoopSettings struct {
-		Enabled bool
-		Mode int
+		Enabled    bool
+		Mode       int
 		LoopOffset int64
-		LoopStart int64
-		LoopEnd int64
+		LoopStart  int64
+		LoopEnd    int64
 	}
 
 	TimeCompressionSettings struct {
-		Enabled bool
+		Enabled          bool
 		AccelerationRate float64 // e.g. 1 to 1, 60 to 1, .25 to 1
-		StartTime int64 // initial time we use to calculate the current accelerated value.
-		TimeOffset int64 // add/subtract x seconds to the clock
+		StartTime        int64   // initial time we use to calculate the current accelerated value.
+		TimeOffset       int64   // add/subtract x seconds to the clock
 	}
 
 	TimeZoneOverrideSettings struct {
-		Enabled bool
-		Sign int
-		HourOffset int
+		Enabled      bool
+		Sign         int
+		HourOffset   int
 		MinuteOffset int
 	}
 
 	ForecastScriptingSettings struct {
 		Enabled bool
-		Mode int
+		Mode    int
 	}
 
 	ExtendedDeviceInfo struct {
-		ID string
-		DataScript int
-		TimeZoneOverride TimeZoneOverrideSettings
-		TimeLoop TimeLoopSettings
-		TimeCompression TimeCompressionSettings
+		ID                string
+		DataScript        int
+		TimeZoneOverride  TimeZoneOverrideSettings
+		TimeLoop          TimeLoopSettings
+		TimeCompression   TimeCompressionSettings
 		ForecastScripting ForecastScriptingSettings
-		HasDateTimeBug bool
-		Attributes map[string]int64
+		HasDateTimeBug    bool
+		Attributes        map[string]int64
 	}
 
-
-
 	RawSensorEntity struct {
-		Serial                string            `datastore:"serial"`
-		Manufacturer          int               `datastore:"manufacturer"`
-		Geo                   Geo               `datastore:"geo"`
-		Handle                string            `datastore:"handle"`
-		Weight                int               `datastore:"weight,omitempty,flatten"`
-		VerificationCode      string            `datastore:"verificationCode"`
-		Series                string            `datastore:"series"`
-		SensorTypeEntityKey   *datastore.Key    `datastore:"sensorTypeEntityKey,omitempty,flatten"`
-		SchemaVersion         int               `datastore:"schemaVersion"`
-		OnDisplayCheckCache   string            `datastore:"onDisplayCheckCache"`
-		ModifiedOn            time.Time         `datastore:"modifiedOn"`
-		Longitude             int               `datastore:"longitude,omitempty,flatten"`
-		LinkedSensors         *datastore.Entity `datastore:"linkedSensors,omitempty,flatten"`
-		Latitude              int               `datastore:"latitude,omitempty,flatten"`
-		LastSynchedVNext      time.Time         `datastore:"lastSynchedVNext"`
-		LastSynched           time.Time         `datastore:"lastSynched"`
-		Kind                  int               `datastore:"kind,omitempty,flatten"`
-		InternalAttributes    int               `datastore:"internalAttributes,omitempty,flatten"`
-		FlaggedForSynchVNext  bool              `datastore:"flaggedForSynchVNext"`
-		FlaggedForSynch       bool              `datastore:"flaggedForSynch"`
-		FlaggedForDeleteVNext bool              `datastore:"flaggedForDeleteVNext"`
-		FlaggedForDelete      bool              `datastore:"flaggedForDelete"`
-		Fields                interface{}       `datastore:"fields,omitempty,flatten"`
-		CreatedOn             time.Time         `datastore:"createdOn"`
-		ClaimToken            int               `datastore:"claimToken,omitempty,flatten"`
-		ClaimCacheKey         int               `datastore:"claimCacheKey,omitempty,flatten"`
-		ClaimCacheId          int               `datastore:"claimCacheId"`
-		Batch                 int               `datastore:"batch"`
+		Serial                string                 `datastore:"serial"`
+		Manufacturer          int                    `datastore:"manufacturer"`
+		Geo                   Geo                    `datastore:"geo"`
+		Handle                string                 `datastore:"handle"`
+		Weight                int                    `datastore:"weight,omitempty,flatten"`
+		VerificationCode      string                 `datastore:"verificationCode"`
+		Series                string                 `datastore:"series"`
+		SensorTypeEntityKey   *datastore.Key         `datastore:"sensorTypeEntityKey,omitempty,flatten"`
+		SchemaVersion         int                    `datastore:"schemaVersion"`
+		OnDisplayCheckCache   string                 `datastore:"onDisplayCheckCache"`
+		ModifiedOn            time.Time              `datastore:"modifiedOn"`
+		Longitude             int                    `datastore:"longitude,omitempty,flatten"`
+		LinkedSensors         *datastore.Entity      `datastore:"linkedSensors,omitempty,flatten"`
+		Latitude              int                    `datastore:"latitude,omitempty,flatten"`
+		LastSynchedVNext      time.Time              `datastore:"lastSynchedVNext"`
+		LastSynched           time.Time              `datastore:"lastSynched"`
+		Kind                  int                    `datastore:"kind,omitempty,flatten"`
+		InternalAttributes    int                    `datastore:"internalAttributes,omitempty,flatten"`
+		FlaggedForSynchVNext  bool                   `datastore:"flaggedForSynchVNext"`
+		FlaggedForSynch       bool                   `datastore:"flaggedForSynch"`
+		FlaggedForDeleteVNext bool                   `datastore:"flaggedForDeleteVNext"`
+		FlaggedForDelete      bool                   `datastore:"flaggedForDelete"`
+		Fields                interface{}            `datastore:"fields,omitempty,flatten"`
+		CreatedOn             time.Time              `datastore:"createdOn"`
+		ClaimToken            int                    `datastore:"claimToken,omitempty,flatten"`
+		ClaimCacheKey         int                    `datastore:"claimCacheKey,omitempty,flatten"`
+		ClaimCacheId          int                    `datastore:"claimCacheId"`
+		Batch                 int                    `datastore:"batch"`
 		Attributes            datastore.PropertyList `datastore:"attributes"`
 		//Attributes            map[string]string `datastore:"attributes,flatten"`
 	}
@@ -149,9 +148,9 @@ type (
 	}
 )
 
-//----------------------------------------------
+// ----------------------------------------------
 // Exports
-//----------------------------------------------
+// ----------------------------------------------
 func LoadCategoryConf(filename string) *CategoryConfList {
 
 	raw, err := ioutil.ReadFile(filename)
@@ -226,7 +225,7 @@ func GetDeviceCat(deviceID string) string {
 func GetExtendedDeviceInfo(ID string) (ExtendedDeviceInfo, error) {
 	key := "device.attributes:" + cache.CACHE_BUST__GLOBAL + cache.CACHE_BUST__DEVICE_INFO + ID
 	raw, err := common.RedisInstance.GetCachedData(key)
-	if (err != nil) {
+	if err != nil {
 		return RefreshExtendedInfo(ID, nil)
 	}
 	var extendedInfo ExtendedDeviceInfo
@@ -248,12 +247,12 @@ func RefreshExtendedInfo(ID string, raw *RawSensorEntity) (ExtendedDeviceInfo, e
 		raw = &x
 	}
 
-	if (raw.Serial != ID) {
+	if raw.Serial != ID {
 		log.Printf("Unexpected Raw Data: %v", raw)
 	}
 	//extendedInfo.ID = raw.Serial
 
-	if (raw.Attributes != nil) {
+	if raw.Attributes != nil {
 		for k := range raw.Attributes {
 			av, _ := raw.Attributes[k].Value.(int64)
 			extendedInfo.Attributes[raw.Attributes[k].Name] = av
@@ -274,16 +273,16 @@ func RefreshExtendedInfo(ID string, raw *RawSensorEntity) (ExtendedDeviceInfo, e
 	//----------
 	extendedInfo.TimeCompression.Enabled = false
 	extendedInfo.TimeCompression.AccelerationRate = 1.0
-	extendedInfo.TimeCompression.StartTime = time.Date(2019, 1,1,0,0,0,0, time.UTC).Unix()
+	extendedInfo.TimeCompression.StartTime = time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC).Unix()
 	extendedInfo.TimeCompression.TimeOffset = 0
 
 	if v, ok = extendedInfo.Attributes["time-compress"]; ok {
-		if (v != 0) {
+		if v != 0 {
 			extendedInfo.TimeCompression.Enabled = true
 		}
-		if (v > 0) {
+		if v > 0 {
 			extendedInfo.TimeCompression.AccelerationRate = float64(v)
-		} else if (v < 0) {
+		} else if v < 0 {
 			extendedInfo.TimeCompression.AccelerationRate = (1.0 / float64(v))
 		}
 	}
@@ -291,7 +290,7 @@ func RefreshExtendedInfo(ID string, raw *RawSensorEntity) (ExtendedDeviceInfo, e
 		extendedInfo.TimeCompression.StartTime = v
 	}
 	if v, ok = extendedInfo.Attributes["time-compress.offset"]; ok {
-		if (v != 0) {
+		if v != 0 {
 			extendedInfo.TimeCompression.Enabled = true
 			extendedInfo.TimeCompression.TimeOffset = v
 		}
@@ -305,9 +304,9 @@ func RefreshExtendedInfo(ID string, raw *RawSensorEntity) (ExtendedDeviceInfo, e
 	extendedInfo.TimeZoneOverride.HourOffset = 0
 	extendedInfo.TimeZoneOverride.MinuteOffset = 0
 	if v, ok = extendedInfo.Attributes["time-zone-override"]; ok {
-		if (v != 0) {
+		if v != 0 {
 			extendedInfo.TimeZoneOverride.Enabled = true
-			if (v < 0) {
+			if v < 0 {
 				extendedInfo.TimeZoneOverride.Sign = -1
 				v = -v
 			}
@@ -326,10 +325,10 @@ func RefreshExtendedInfo(ID string, raw *RawSensorEntity) (ExtendedDeviceInfo, e
 
 	if v, ok = extendedInfo.Attributes["time-loop"]; ok {
 		vm := int(v)
-		if (vm > 0 && vm <= TimeLoopBackendDriver) {
+		if vm > 0 && vm <= TimeLoopBackendDriver {
 			extendedInfo.TimeLoop.Mode = vm
 			extendedInfo.TimeLoop.Enabled = true
-			if (vm == TimeLoopCustom) {
+			if vm == TimeLoopCustom {
 				if v, ok = extendedInfo.Attributes["time-loop.start"]; ok {
 					extendedInfo.TimeLoop.LoopStart = v
 				}
@@ -338,9 +337,9 @@ func RefreshExtendedInfo(ID string, raw *RawSensorEntity) (ExtendedDeviceInfo, e
 					extendedInfo.TimeLoop.LoopEnd = v
 				}
 
-				if (extendedInfo.TimeLoop.LoopEnd  < extendedInfo.TimeLoop.LoopStart) {
+				if extendedInfo.TimeLoop.LoopEnd < extendedInfo.TimeLoop.LoopStart {
 					s := extendedInfo.TimeLoop.LoopEnd
-					extendedInfo.TimeLoop.LoopEnd  = extendedInfo.TimeLoop.LoopStart
+					extendedInfo.TimeLoop.LoopEnd = extendedInfo.TimeLoop.LoopStart
 					extendedInfo.TimeLoop.LoopStart = s
 				}
 			}
@@ -348,13 +347,12 @@ func RefreshExtendedInfo(ID string, raw *RawSensorEntity) (ExtendedDeviceInfo, e
 			log.Printf("[Device] Invalid TimeLoop Mode %d", v)
 		}
 
-		if (extendedInfo.TimeLoop.Enabled) {
+		if extendedInfo.TimeLoop.Enabled {
 			if v, ok = extendedInfo.Attributes["time-loop.offset"]; ok {
 				extendedInfo.TimeLoop.LoopOffset = v
 			}
 		}
 	}
-
 
 	//----------
 	// ForecastScripting Settings
@@ -362,10 +360,10 @@ func RefreshExtendedInfo(ID string, raw *RawSensorEntity) (ExtendedDeviceInfo, e
 	extendedInfo.ForecastScripting.Enabled = false
 	extendedInfo.ForecastScripting.Mode = ForecastScriptDisabled
 	if v, ok = extendedInfo.Attributes["forecast-script"]; ok {
-		if (v >= ForecastScriptStaticA && v <= ForecastScriptBackendDriver) {
+		if v >= ForecastScriptStaticA && v <= ForecastScriptBackendDriver {
 			extendedInfo.ForecastScripting.Mode = int(v)
 			extendedInfo.ForecastScripting.Enabled = true
-		} else if (v != 0) {
+		} else if v != 0 {
 			log.Printf("[Device] Invalid Forecast Script Mode %d", int(v))
 		}
 	}
@@ -385,9 +383,9 @@ func RefreshExtendedInfo(ID string, raw *RawSensorEntity) (ExtendedDeviceInfo, e
 	return extendedInfo, err
 }
 
-//----------------------------------------------
+// ----------------------------------------------
 // Local Funcs
-//----------------------------------------------
+// ----------------------------------------------
 func hexToFloat(h string) float32 {
 
 	un, err := strconv.ParseUint(h, 16, 32)

@@ -1,4 +1,5 @@
-package main
+package cacheUpdater
+
 //----------------------------------------------
 // CopyRight 2019 La Crosse Technology, LTD.
 //----------------------------------------------
@@ -10,18 +11,18 @@ import (
 	"fmt"
 )
 
-//----------------------------------------------
+// ----------------------------------------------
 // Types
-//----------------------------------------------
+// ----------------------------------------------
 type Dispatcher struct {
 	// A pool of workers channels that are registered with the dispatcher
 	maxWorkers int
 	WorkerPool chan chan Job
 }
 
-//----------------------------------------------
+// ----------------------------------------------
 // Exports
-//----------------------------------------------
+// ----------------------------------------------
 func NewDispatcher(maxWorkers int) *Dispatcher {
 	pool := make(chan chan Job, maxWorkers)
 	return &Dispatcher{WorkerPool: pool, maxWorkers: maxWorkers}
@@ -37,9 +38,9 @@ func (d *Dispatcher) Run() {
 	go d.dispatch()
 }
 
-//----------------------------------------------
+// ----------------------------------------------
 // Local Funcs
-//----------------------------------------------
+// ----------------------------------------------
 func (d *Dispatcher) dispatch() {
 	fmt.Println("[CacheUpdater] Worker que dispatcher started...")
 	for {

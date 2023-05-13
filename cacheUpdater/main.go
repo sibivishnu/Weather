@@ -1,4 +1,5 @@
-package main
+package cacheUpdater
+
 //----------------------------------------------
 // CopyRight 2019 La Crosse Technology, LTD.
 //----------------------------------------------
@@ -7,18 +8,19 @@ package main
 // Imports
 //----------------------------------------------
 import (
-	"../common/init"
-	"github.com/urfave/cli"
 	"log"
 	"os"
 	"path/filepath"
 	"strconv"
 	"time"
+
+	"github.com/sibivishnu/Weather/common/init"
+	"github.com/urfave/cli"
 )
 
-//----------------------------------------------
+// ----------------------------------------------
 // Constants
-//----------------------------------------------
+// ----------------------------------------------
 const (
 	ENV_ACCU_API_KEY               = "ACCU_API_KEY"
 	ENV_REDIS_HOST                 = "REDIS_HOST"
@@ -36,10 +38,9 @@ const (
 	ENV_ATTRIBUTE_TOPIC_NAME       = "ATTRIBUTE_TOPIC_NAME"
 )
 
-
-//----------------------------------------------
+// ----------------------------------------------
 // Globals
-//----------------------------------------------
+// ----------------------------------------------
 var (
 	options map[string]interface{}
 
@@ -55,12 +56,12 @@ var (
 	topicName        string
 
 	attributeSubscription string
-	attributeTopic string
+	attributeTopic        string
 )
 
-//----------------------------------------------
+// ----------------------------------------------
 // Local Funcs
-//----------------------------------------------
+// ----------------------------------------------
 func main() {
 	app := cli.NewApp()
 	app.Name = "Weather Cache updater Service"
@@ -99,8 +100,7 @@ func runIt(c *cli.Context) {
 	options["accuweather.key"] = os.Getenv(ENV_ACCU_API_KEY)
 	options["datastore.project"] = "lax-gateway" // os.Getenv(ENV_PROJECT_ID)
 	options["config.categories"] = "/conf/categories.json"
-	common_init.LoadCommonEnvironment(options)
-
+	init.LoadCommonEnvironment(options)
 
 	//-----------------------------------------
 	// Launch Services

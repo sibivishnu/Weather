@@ -12,10 +12,11 @@ import (
 	"net/http"
 	"os"
 
-	"../common"
 	firebase "firebase.google.com/go"
 	"firebase.google.com/go/auth"
 	"github.com/gorilla/mux"
+	"github.com/sibivishnu/Weather/common"
+	"github.com/sibivishnu/Weather/common/init"
 	"github.com/urfave/cli"
 	"google.golang.org/api/option"
 )
@@ -118,7 +119,7 @@ func runIt(runtimeContext *cli.Context) {
 	options["accuweather.key"] = os.Getenv(ENV_ACCU_API_KEY)
 	options["datastore.project"] = "lax-gateway" // os.Getenv(ENV_PROJECT_ID)
 	options["config.categories"] = "/conf/categories.json"
-	common_init.LoadCommonEnvironment(options)
+	init.LoadCommonEnvironment(options)
 
 	// Locals
 	firebaseServiceFile := os.Getenv(ENV_FIREBASE_SERVICE_FILE)

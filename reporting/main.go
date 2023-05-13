@@ -1,9 +1,9 @@
 package main
 
 import (
-	"../common/cache"
-	"github.com/urfave/cli"
 	"github.com/go-redis/redis"
+	"github.com/sibivishnu/Weather/common/cache"
+	"github.com/urfave/cli"
 	"log"
 	"os"
 	"time"

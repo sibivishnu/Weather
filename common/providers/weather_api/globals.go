@@ -4,19 +4,18 @@ package weather_api
 // CopyRight 2020 La Crosse Technology, LTD.
 //==============================================
 
-
 //==============================================
 // Imports
 //==============================================
 import (
-	"../../const/accuweather"
-	"../../const/firmware"
-	"../../const/legacy_firmware"
-	"../../const/mcu"
+	"github.com/sibivishnu/Weather/common/const/accuweather"
+	"github.com/sibivishnu/Weather/common/const/firmware"
+	"github.com/sibivishnu/Weather/common/const/legacy_firmware"
+	"github.com/sibivishnu/Weather/common/const/mcu"
+
 	"sync"
 	"time"
 )
-
 
 var (
 
@@ -24,53 +23,53 @@ var (
 	 * @brief Maps Accuweather Icons into Display Icons.
 	 */
 	AccuweatherIcons = map[int]AccuIcon{
-	const_accuweather.IconError:                              {IconNumber: const_accuweather.IconError, DisplayIcon: 0, Icon: "", Day: false, Night: false, Text: "Error"},
-	const_accuweather.IconDaySunny:                           {IconNumber: const_accuweather.IconDaySunny, DisplayIcon: const_mcu.IconSunny, Icon: "https://developer.accuweather.com/sites/default/files/01-s.png", Day: true, Night: false, Text: "Sunny"},
-	const_accuweather.IconDayMostlySunny:                     {IconNumber: const_accuweather.IconDayMostlySunny, DisplayIcon: const_mcu.IconSunny, Icon: "https://developer.accuweather.com/sites/default/files/02-s.png", Day: true, Night: false, Text: "Mostly Sunny"},
-	const_accuweather.IconDayPartlySunny:                     {IconNumber: const_accuweather.IconDayPartlySunny, DisplayIcon: const_mcu.IconPartlyCloudy, Icon: "https://developer.accuweather.com/sites/default/files/03-s.png", Day: true, Night: false, Text: "Partly Sunny"},
-	const_accuweather.IconDayIntermittentClouds:              {IconNumber: const_accuweather.IconDayIntermittentClouds, DisplayIcon: const_mcu.IconPartlyCloudy, Icon: "https://developer.accuweather.com/sites/default/files/04-s.png", Day: true, Night: false, Text: "Intermittent Clouds"},
-	const_accuweather.IconDayHazySunshine:                    {IconNumber: const_accuweather.IconDayHazySunshine, DisplayIcon: const_mcu.IconPartlyCloudy, Icon: "https://developer.accuweather.com/sites/default/files/05-s.png", Day: true, Night: false, Text: "Hazy Sunshine"},
-	const_accuweather.IconDayMostlyCloudy:                    {IconNumber: const_accuweather.IconDayMostlyCloudy, DisplayIcon: const_mcu.IconCloudy, Icon: "https://developer.accuweather.com/sites/default/files/06-s.png", Day: true, Night: false, Text: "Mostly Cloudy"},
-	const_accuweather.IconCloudy:                             {IconNumber: const_accuweather.IconCloudy, DisplayIcon: const_mcu.IconCloudy, Icon: "https://developer.accuweather.com/sites/default/files/07-s.png", Day: true, Night: true, Text: "Cloudy"},
-	const_accuweather.IconDreary:                             {IconNumber: const_accuweather.IconDreary, DisplayIcon: const_mcu.IconCloudy, Icon: "https://developer.accuweather.com/sites/default/files/08-s.png", Day: true, Night: true, Text: "Dreary (Overcast)"},
-	const_accuweather.IconFog:                                {IconNumber: const_accuweather.IconFog, DisplayIcon: const_mcu.IconFog, Icon: "https://developer.accuweather.com/sites/default/files/11-s.png", Day: true, Night: true, Text: "Fog"},
-	const_accuweather.IconShowers:                            {IconNumber: const_accuweather.IconShowers, DisplayIcon: const_mcu.IconRain, Icon: "https://developer.accuweather.com/sites/default/files/12-s.png", Day: true, Night: true, Text: "Showers"},
-	const_accuweather.IconDayMostlyCloudyWithShowers:         {IconNumber: const_accuweather.IconDayMostlyCloudyWithShowers, DisplayIcon: const_mcu.IconRain, Icon: "https://developer.accuweather.com/sites/default/files/13-s.png", Day: true, Night: false, Text: "Mostly Cloudy w/ Showers"},
-	const_accuweather.IconDayPartlySunnyWithShowers:          {IconNumber: const_accuweather.IconDayPartlySunnyWithShowers, DisplayIcon: const_mcu.IconPartlyCloudyWithRain, Icon: "https://developer.accuweather.com/sites/default/files/14-s.png", Day: true, Night: false, Text: "Partly Sunny w/ Showers"},
-	const_accuweather.IconThunderstorms:                      {IconNumber: const_accuweather.IconThunderstorms, DisplayIcon: const_mcu.IconStorm, Icon: "https://developer.accuweather.com/sites/default/files/15-s.png", Day: true, Night: true, Text: "T-Storms"},
-	const_accuweather.IconDayMostlyCloudyWithThunderStorms:   {IconNumber: const_accuweather.IconDayMostlyCloudyWithThunderStorms, DisplayIcon: const_mcu.IconStorm, Icon: "https://developer.accuweather.com/sites/default/files/16-s.png", Day: true, Night: false, Text: "Mostly Cloudy w/ T-Storms"},
-	const_accuweather.IconDayPartlySunnyWithThunderstorms:    {IconNumber: const_accuweather.IconDayPartlySunnyWithThunderstorms, DisplayIcon: const_mcu.IconStorm, Icon: "https://developer.accuweather.com/sites/default/files/17-s.png", Day: true, Night: false, Text: "Partly Sunny w/ T-Storms"},
-	const_accuweather.IconRain:                               {IconNumber: const_accuweather.IconRain, DisplayIcon: const_mcu.IconRain, Icon: "https://developer.accuweather.com/sites/default/files/18-s.png", Day: true, Night: true, Text: "Rain"},
-	const_accuweather.IconFlurries:                           {IconNumber: const_accuweather.IconFlurries, DisplayIcon: const_mcu.IconFlurries, Icon: "https://developer.accuweather.com/sites/default/files/19-s.png", Day: true, Night: true, Text: "Flurries"},
-	const_accuweather.IconDayMostlyCloudyWithFlurries:        {IconNumber: const_accuweather.IconDayMostlyCloudyWithFlurries, DisplayIcon: const_mcu.IconFlurries, Icon: "https://developer.accuweather.com/sites/default/files/20-s.png", Day: true, Night: false, Text: "Mostly Cloudy w/ Flurries"},
-	const_accuweather.IconDayPartlySunnyWithFlurries:         {IconNumber: const_accuweather.IconDayPartlySunnyWithFlurries, DisplayIcon: const_mcu.IconFlurries, Icon: "https://developer.accuweather.com/sites/default/files/21-s.png", Day: true, Night: false, Text: "Partly Sunny w/ Flurries"},
-	const_accuweather.IconSnow:                               {IconNumber: const_accuweather.IconSnow, DisplayIcon: const_mcu.IconSnow, Icon: "https://developer.accuweather.com/sites/default/files/22-s.png", Day: true, Night: true, Text: "Snow"},
-	const_accuweather.IconDayMostlyCloudyWithSnow:            {IconNumber: const_accuweather.IconDayMostlyCloudyWithSnow, DisplayIcon: const_mcu.IconSnow, Icon: "https://developer.accuweather.com/sites/default/files/23-s.png", Day: true, Night: false, Text: "Mostly Cloudy w/ Snow"},
-	const_accuweather.IconIce:                                {IconNumber: const_accuweather.IconIce, DisplayIcon: const_mcu.IconIce, Icon: "https://developer.accuweather.com/sites/default/files/24-s.png", Day: true, Night: true, Text: "Ice"},
-	const_accuweather.IconSleet:                              {IconNumber: const_accuweather.IconSleet, DisplayIcon: const_mcu.IconFreezingRain, Icon: "https://developer.accuweather.com/sites/default/files/25-s.png", Day: true, Night: true, Text: "Sleet"},
-	const_accuweather.IconFreezingRain:                       {IconNumber: const_accuweather.IconFreezingRain, DisplayIcon: const_mcu.IconFreezingRain, Icon: "https://developer.accuweather.com/sites/default/files/26-s.png", Day: true, Night: true, Text: "Freezing Rain"},
-	const_accuweather.IconRainAndSnow:                        {IconNumber: const_accuweather.IconRainAndSnow, DisplayIcon: const_mcu.IconFreezingRain, Icon: "https://developer.accuweather.com/sites/default/files/29-s.png", Day: true, Night: true, Text: "Rain and Snow"},
-	const_accuweather.IconHot:                                {IconNumber: const_accuweather.IconHot, DisplayIcon: const_mcu.IconSunny, Icon: "https://developer.accuweather.com/sites/default/files/30-s.png", Day: true, Night: true, Text: "Hot"},
-	const_accuweather.IconCold:                               {IconNumber: const_accuweather.IconCold, DisplayIcon: const_mcu.IconSunny, Icon: "https://developer.accuweather.com/sites/default/files/31-s.png", Day: true, Night: true, Text: "Cold"},
-	const_accuweather.IconWindy:                              {IconNumber: const_accuweather.IconWindy, DisplayIcon: const_mcu.IconWind, Icon: "https://developer.accuweather.com/sites/default/files/32-s.png", Day: true, Night: true, Text: "Windy"},
-	const_accuweather.IconNightClear:                         {IconNumber: const_accuweather.IconNightClear, DisplayIcon: const_mcu.IconSunny, Icon: "https://developer.accuweather.com/sites/default/files/33-s.png", Day: false, Night: true, Text: "Clear"},
-	const_accuweather.IconNightMostlyClear:                   {IconNumber: const_accuweather.IconNightMostlyClear, DisplayIcon: const_mcu.IconSunny, Icon: "https://developer.accuweather.com/sites/default/files/34-s.png", Day: false, Night: true, Text: "Mostly Clear"},
-	const_accuweather.IconNightPartlyCloudy:                  {IconNumber: const_accuweather.IconNightPartlyCloudy, DisplayIcon: const_mcu.IconPartlyCloudy, Icon: "https://developer.accuweather.com/sites/default/files/35-s.png", Day: false, Night: true, Text: "Partly Cloudy"},
-	const_accuweather.IconNightIntermittentClouds:            {IconNumber: const_accuweather.IconNightIntermittentClouds, DisplayIcon: const_mcu.IconPartlyCloudy, Icon: "https://developer.accuweather.com/sites/default/files/36-s.png", Day: false, Night: true, Text: "Intermittent Clouds"},
-	const_accuweather.IconNightHazyMoonlight:                 {IconNumber: const_accuweather.IconNightHazyMoonlight, DisplayIcon: const_mcu.IconPartlyCloudy, Icon: "https://developer.accuweather.com/sites/default/files/37-s.png", Day: false, Night: true, Text: "Hazy Moonlight"},
-	const_accuweather.IconNightMostlyCloudy:                  {IconNumber: const_accuweather.IconNightMostlyCloudy, DisplayIcon: const_mcu.IconCloudy, Icon: "https://developer.accuweather.com/sites/default/files/38-s.png", Day: false, Night: true, Text: "Mostly Cloudy"},
-	const_accuweather.IconNightPartlyCloudyWithShowers:       {IconNumber: const_accuweather.IconNightPartlyCloudyWithShowers, DisplayIcon: const_mcu.IconPartlyCloudyWithRain, Icon: "https://developer.accuweather.com/sites/default/files/39-s.png", Day: false, Night: true, Text: "Partly Cloudy w/ Showers"},
-	const_accuweather.IconNightMostlyCloudyWithShowers:       {IconNumber: const_accuweather.IconNightMostlyCloudyWithShowers, DisplayIcon: const_mcu.IconRain, Icon: "https://developer.accuweather.com/sites/default/files/40-s.png", Day: false, Night: true, Text: "Mostly Cloudy w/ Showers"},
-	const_accuweather.IconNightPartlyCloudyWithThunderstorms: {IconNumber: const_accuweather.IconNightPartlyCloudyWithThunderstorms, DisplayIcon: const_mcu.IconStorm, Icon: "https://developer.accuweather.com/sites/default/files/41-s.png", Day: false, Night: true, Text: "Partly Cloudy w/ T-Storms"},
-	const_accuweather.IconNightMostlyCloudyWithThunderStorms: {IconNumber: const_accuweather.IconNightMostlyCloudyWithThunderStorms, DisplayIcon: const_mcu.IconStorm, Icon: "https://developer.accuweather.com/sites/default/files/42-s.png", Day: false, Night: true, Text: "Mostly Cloudy w/ T-Storms"},
-	const_accuweather.IconNightMostlyCloudyWithFlurries:      {IconNumber: const_accuweather.IconNightMostlyCloudyWithFlurries, DisplayIcon: const_mcu.IconFlurries, Icon: "https://developer.accuweather.com/sites/default/files/43-s.png", Day: false, Night: true, Text: "Mostly Cloudy w/ Flurries"},
-	const_accuweather.IconNightMostlyCloudyWithSnow:          {IconNumber: const_accuweather.IconNightMostlyCloudyWithSnow, DisplayIcon: const_mcu.IconSnow, Icon: "https://developer.accuweather.com/sites/default/files/44-s.png", Day: false, Night: true, Text: "Mostly Cloudy w/ Snow "},
-}
+		const_accuweather.IconError:                              {IconNumber: const_accuweather.IconError, DisplayIcon: 0, Icon: "", Day: false, Night: false, Text: "Error"},
+		const_accuweather.IconDaySunny:                           {IconNumber: const_accuweather.IconDaySunny, DisplayIcon: const_mcu.IconSunny, Icon: "https://developer.accuweather.com/sites/default/files/01-s.png", Day: true, Night: false, Text: "Sunny"},
+		const_accuweather.IconDayMostlySunny:                     {IconNumber: const_accuweather.IconDayMostlySunny, DisplayIcon: const_mcu.IconSunny, Icon: "https://developer.accuweather.com/sites/default/files/02-s.png", Day: true, Night: false, Text: "Mostly Sunny"},
+		const_accuweather.IconDayPartlySunny:                     {IconNumber: const_accuweather.IconDayPartlySunny, DisplayIcon: const_mcu.IconPartlyCloudy, Icon: "https://developer.accuweather.com/sites/default/files/03-s.png", Day: true, Night: false, Text: "Partly Sunny"},
+		const_accuweather.IconDayIntermittentClouds:              {IconNumber: const_accuweather.IconDayIntermittentClouds, DisplayIcon: const_mcu.IconPartlyCloudy, Icon: "https://developer.accuweather.com/sites/default/files/04-s.png", Day: true, Night: false, Text: "Intermittent Clouds"},
+		const_accuweather.IconDayHazySunshine:                    {IconNumber: const_accuweather.IconDayHazySunshine, DisplayIcon: const_mcu.IconPartlyCloudy, Icon: "https://developer.accuweather.com/sites/default/files/05-s.png", Day: true, Night: false, Text: "Hazy Sunshine"},
+		const_accuweather.IconDayMostlyCloudy:                    {IconNumber: const_accuweather.IconDayMostlyCloudy, DisplayIcon: const_mcu.IconCloudy, Icon: "https://developer.accuweather.com/sites/default/files/06-s.png", Day: true, Night: false, Text: "Mostly Cloudy"},
+		const_accuweather.IconCloudy:                             {IconNumber: const_accuweather.IconCloudy, DisplayIcon: const_mcu.IconCloudy, Icon: "https://developer.accuweather.com/sites/default/files/07-s.png", Day: true, Night: true, Text: "Cloudy"},
+		const_accuweather.IconDreary:                             {IconNumber: const_accuweather.IconDreary, DisplayIcon: const_mcu.IconCloudy, Icon: "https://developer.accuweather.com/sites/default/files/08-s.png", Day: true, Night: true, Text: "Dreary (Overcast)"},
+		const_accuweather.IconFog:                                {IconNumber: const_accuweather.IconFog, DisplayIcon: const_mcu.IconFog, Icon: "https://developer.accuweather.com/sites/default/files/11-s.png", Day: true, Night: true, Text: "Fog"},
+		const_accuweather.IconShowers:                            {IconNumber: const_accuweather.IconShowers, DisplayIcon: const_mcu.IconRain, Icon: "https://developer.accuweather.com/sites/default/files/12-s.png", Day: true, Night: true, Text: "Showers"},
+		const_accuweather.IconDayMostlyCloudyWithShowers:         {IconNumber: const_accuweather.IconDayMostlyCloudyWithShowers, DisplayIcon: const_mcu.IconRain, Icon: "https://developer.accuweather.com/sites/default/files/13-s.png", Day: true, Night: false, Text: "Mostly Cloudy w/ Showers"},
+		const_accuweather.IconDayPartlySunnyWithShowers:          {IconNumber: const_accuweather.IconDayPartlySunnyWithShowers, DisplayIcon: const_mcu.IconPartlyCloudyWithRain, Icon: "https://developer.accuweather.com/sites/default/files/14-s.png", Day: true, Night: false, Text: "Partly Sunny w/ Showers"},
+		const_accuweather.IconThunderstorms:                      {IconNumber: const_accuweather.IconThunderstorms, DisplayIcon: const_mcu.IconStorm, Icon: "https://developer.accuweather.com/sites/default/files/15-s.png", Day: true, Night: true, Text: "T-Storms"},
+		const_accuweather.IconDayMostlyCloudyWithThunderStorms:   {IconNumber: const_accuweather.IconDayMostlyCloudyWithThunderStorms, DisplayIcon: const_mcu.IconStorm, Icon: "https://developer.accuweather.com/sites/default/files/16-s.png", Day: true, Night: false, Text: "Mostly Cloudy w/ T-Storms"},
+		const_accuweather.IconDayPartlySunnyWithThunderstorms:    {IconNumber: const_accuweather.IconDayPartlySunnyWithThunderstorms, DisplayIcon: const_mcu.IconStorm, Icon: "https://developer.accuweather.com/sites/default/files/17-s.png", Day: true, Night: false, Text: "Partly Sunny w/ T-Storms"},
+		const_accuweather.IconRain:                               {IconNumber: const_accuweather.IconRain, DisplayIcon: const_mcu.IconRain, Icon: "https://developer.accuweather.com/sites/default/files/18-s.png", Day: true, Night: true, Text: "Rain"},
+		const_accuweather.IconFlurries:                           {IconNumber: const_accuweather.IconFlurries, DisplayIcon: const_mcu.IconFlurries, Icon: "https://developer.accuweather.com/sites/default/files/19-s.png", Day: true, Night: true, Text: "Flurries"},
+		const_accuweather.IconDayMostlyCloudyWithFlurries:        {IconNumber: const_accuweather.IconDayMostlyCloudyWithFlurries, DisplayIcon: const_mcu.IconFlurries, Icon: "https://developer.accuweather.com/sites/default/files/20-s.png", Day: true, Night: false, Text: "Mostly Cloudy w/ Flurries"},
+		const_accuweather.IconDayPartlySunnyWithFlurries:         {IconNumber: const_accuweather.IconDayPartlySunnyWithFlurries, DisplayIcon: const_mcu.IconFlurries, Icon: "https://developer.accuweather.com/sites/default/files/21-s.png", Day: true, Night: false, Text: "Partly Sunny w/ Flurries"},
+		const_accuweather.IconSnow:                               {IconNumber: const_accuweather.IconSnow, DisplayIcon: const_mcu.IconSnow, Icon: "https://developer.accuweather.com/sites/default/files/22-s.png", Day: true, Night: true, Text: "Snow"},
+		const_accuweather.IconDayMostlyCloudyWithSnow:            {IconNumber: const_accuweather.IconDayMostlyCloudyWithSnow, DisplayIcon: const_mcu.IconSnow, Icon: "https://developer.accuweather.com/sites/default/files/23-s.png", Day: true, Night: false, Text: "Mostly Cloudy w/ Snow"},
+		const_accuweather.IconIce:                                {IconNumber: const_accuweather.IconIce, DisplayIcon: const_mcu.IconIce, Icon: "https://developer.accuweather.com/sites/default/files/24-s.png", Day: true, Night: true, Text: "Ice"},
+		const_accuweather.IconSleet:                              {IconNumber: const_accuweather.IconSleet, DisplayIcon: const_mcu.IconFreezingRain, Icon: "https://developer.accuweather.com/sites/default/files/25-s.png", Day: true, Night: true, Text: "Sleet"},
+		const_accuweather.IconFreezingRain:                       {IconNumber: const_accuweather.IconFreezingRain, DisplayIcon: const_mcu.IconFreezingRain, Icon: "https://developer.accuweather.com/sites/default/files/26-s.png", Day: true, Night: true, Text: "Freezing Rain"},
+		const_accuweather.IconRainAndSnow:                        {IconNumber: const_accuweather.IconRainAndSnow, DisplayIcon: const_mcu.IconFreezingRain, Icon: "https://developer.accuweather.com/sites/default/files/29-s.png", Day: true, Night: true, Text: "Rain and Snow"},
+		const_accuweather.IconHot:                                {IconNumber: const_accuweather.IconHot, DisplayIcon: const_mcu.IconSunny, Icon: "https://developer.accuweather.com/sites/default/files/30-s.png", Day: true, Night: true, Text: "Hot"},
+		const_accuweather.IconCold:                               {IconNumber: const_accuweather.IconCold, DisplayIcon: const_mcu.IconSunny, Icon: "https://developer.accuweather.com/sites/default/files/31-s.png", Day: true, Night: true, Text: "Cold"},
+		const_accuweather.IconWindy:                              {IconNumber: const_accuweather.IconWindy, DisplayIcon: const_mcu.IconWind, Icon: "https://developer.accuweather.com/sites/default/files/32-s.png", Day: true, Night: true, Text: "Windy"},
+		const_accuweather.IconNightClear:                         {IconNumber: const_accuweather.IconNightClear, DisplayIcon: const_mcu.IconSunny, Icon: "https://developer.accuweather.com/sites/default/files/33-s.png", Day: false, Night: true, Text: "Clear"},
+		const_accuweather.IconNightMostlyClear:                   {IconNumber: const_accuweather.IconNightMostlyClear, DisplayIcon: const_mcu.IconSunny, Icon: "https://developer.accuweather.com/sites/default/files/34-s.png", Day: false, Night: true, Text: "Mostly Clear"},
+		const_accuweather.IconNightPartlyCloudy:                  {IconNumber: const_accuweather.IconNightPartlyCloudy, DisplayIcon: const_mcu.IconPartlyCloudy, Icon: "https://developer.accuweather.com/sites/default/files/35-s.png", Day: false, Night: true, Text: "Partly Cloudy"},
+		const_accuweather.IconNightIntermittentClouds:            {IconNumber: const_accuweather.IconNightIntermittentClouds, DisplayIcon: const_mcu.IconPartlyCloudy, Icon: "https://developer.accuweather.com/sites/default/files/36-s.png", Day: false, Night: true, Text: "Intermittent Clouds"},
+		const_accuweather.IconNightHazyMoonlight:                 {IconNumber: const_accuweather.IconNightHazyMoonlight, DisplayIcon: const_mcu.IconPartlyCloudy, Icon: "https://developer.accuweather.com/sites/default/files/37-s.png", Day: false, Night: true, Text: "Hazy Moonlight"},
+		const_accuweather.IconNightMostlyCloudy:                  {IconNumber: const_accuweather.IconNightMostlyCloudy, DisplayIcon: const_mcu.IconCloudy, Icon: "https://developer.accuweather.com/sites/default/files/38-s.png", Day: false, Night: true, Text: "Mostly Cloudy"},
+		const_accuweather.IconNightPartlyCloudyWithShowers:       {IconNumber: const_accuweather.IconNightPartlyCloudyWithShowers, DisplayIcon: const_mcu.IconPartlyCloudyWithRain, Icon: "https://developer.accuweather.com/sites/default/files/39-s.png", Day: false, Night: true, Text: "Partly Cloudy w/ Showers"},
+		const_accuweather.IconNightMostlyCloudyWithShowers:       {IconNumber: const_accuweather.IconNightMostlyCloudyWithShowers, DisplayIcon: const_mcu.IconRain, Icon: "https://developer.accuweather.com/sites/default/files/40-s.png", Day: false, Night: true, Text: "Mostly Cloudy w/ Showers"},
+		const_accuweather.IconNightPartlyCloudyWithThunderstorms: {IconNumber: const_accuweather.IconNightPartlyCloudyWithThunderstorms, DisplayIcon: const_mcu.IconStorm, Icon: "https://developer.accuweather.com/sites/default/files/41-s.png", Day: false, Night: true, Text: "Partly Cloudy w/ T-Storms"},
+		const_accuweather.IconNightMostlyCloudyWithThunderStorms: {IconNumber: const_accuweather.IconNightMostlyCloudyWithThunderStorms, DisplayIcon: const_mcu.IconStorm, Icon: "https://developer.accuweather.com/sites/default/files/42-s.png", Day: false, Night: true, Text: "Mostly Cloudy w/ T-Storms"},
+		const_accuweather.IconNightMostlyCloudyWithFlurries:      {IconNumber: const_accuweather.IconNightMostlyCloudyWithFlurries, DisplayIcon: const_mcu.IconFlurries, Icon: "https://developer.accuweather.com/sites/default/files/43-s.png", Day: false, Night: true, Text: "Mostly Cloudy w/ Flurries"},
+		const_accuweather.IconNightMostlyCloudyWithSnow:          {IconNumber: const_accuweather.IconNightMostlyCloudyWithSnow, DisplayIcon: const_mcu.IconSnow, Icon: "https://developer.accuweather.com/sites/default/files/44-s.png", Day: false, Night: true, Text: "Mostly Cloudy w/ Snow "},
+	}
 )
 
-//----------------------------------------------
+// ----------------------------------------------
 // Globals - Tables - Weather Icon Details
-//----------------------------------------------
+// ----------------------------------------------
 var (
 
 	//----------------------------------------------
@@ -178,7 +177,6 @@ var (
 	//----------------------------------------------
 	// Globals - Tables - Moonphase Map
 	//----------------------------------------------
-
 
 	// Moon Phases and Weather Categories must match Enum Values from Firmware trie.h
 	/**
@@ -293,5 +291,3 @@ var (
 	 */
 	LocationMapMutex = sync.RWMutex{}
 )
-
-

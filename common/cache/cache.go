@@ -1,4 +1,5 @@
 package cache
+
 //----------------------------------------------
 // CopyRight 2019 La Crosse Technology, LTD.
 //----------------------------------------------
@@ -7,8 +8,6 @@ package cache
 // Imports
 //----------------------------------------------
 import (
-	//"crypto/md5"
-	//"encoding/hex"
 	"github.com/go-redis/redis"
 	"io/ioutil"
 	"log"
@@ -16,11 +15,10 @@ import (
 	"time"
 )
 
-
 const (
-	CACHE_BUST__GLOBAL = ""
-	CACHE_BUST__DEVICE = ""
-	CACHE_BUST__FILE = ""
+	CACHE_BUST__GLOBAL      = ""
+	CACHE_BUST__DEVICE      = ""
+	CACHE_BUST__FILE        = ""
 	CACHE_BUST__DEVICE_INFO = ":di-v4:"
 )
 
@@ -34,12 +32,12 @@ var (
 	localCache map[string][]byte
 )
 
-//----------------------------------------------
+// ----------------------------------------------
 // Exports
-//----------------------------------------------
+// ----------------------------------------------
 func (redisInstance RedisInstance) GetCachedFile(folder string, file string, expiration time.Duration) ([]byte, error) {
 
-	if (localCache == nil) {
+	if localCache == nil {
 		localCache = make(map[string][]byte)
 	}
 
@@ -60,26 +58,25 @@ func (redisInstance RedisInstance) GetCachedFile(folder string, file string, exp
 	}
 
 	/*
-	hasher := md5.New()
-	hasher.Write([]byte(file))
-	hash := hex.EncodeToString(hasher.Sum(nil))
-	key := "file.cache:" + hash
+		hasher := md5.New()
+		hasher.Write([]byte(file))
+		hash := hex.EncodeToString(hasher.Sum(nil))
+		key := "file.cache:" + hash
 
-	r, err := redisInstance.GetCachedData(key)
-	if (err != nil) {
-		// Loading the template file, which depends on the category
-		body, err := ioutil.ReadFile(path.Join(folder, file))
-		if err == nil {
-			redisInstance.SaveRedisData(body, key, expiration)
-		} else {
-			log.Printf("[Cache] Unable to read file %s:%s| %v", folder, file, err)
+		r, err := redisInstance.GetCachedData(key)
+		if (err != nil) {
+			// Loading the template file, which depends on the category
+			body, err := ioutil.ReadFile(path.Join(folder, file))
+			if err == nil {
+				redisInstance.SaveRedisData(body, key, expiration)
+			} else {
+				log.Printf("[Cache] Unable to read file %s:%s| %v", folder, file, err)
+			}
+			return body, err
 		}
-		return body, err
-	}
-	return r, err
-	 */
+		return r, err
+	*/
 }
-
 
 // Write the data to the cache
 func (redisInstance RedisInstance) SaveRedisData(data []byte, key string, expiration time.Duration) error {

@@ -2,7 +2,7 @@ FROM buildpack-deps
 
 RUN apt-get install -y ca-certificates
 
-ADD ./cacheUpdater .
+# ADD ./cacheUpdater . sibi
 ADD ./files files/.
 ADD ./conf conf/.
 ADD ./runUpdater.sh .

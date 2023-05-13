@@ -1,4 +1,5 @@
-package main
+package cacheUpdater
+
 //----------------------------------------------
 // CopyRight 2019 La Crosse Technology, LTD.
 //----------------------------------------------
@@ -7,15 +8,15 @@ package main
 // Imports
 //----------------------------------------------
 import (
-	"../common"
-	"../common/const/device"
-	"../common/providers/weather_api"
 	"bufio"
 	"bytes"
 	"cloud.google.com/go/datastore"
 	"cloud.google.com/go/pubsub"
 	"encoding/json"
 	"fmt"
+	"github.com/sibivishnu/Weather/common"
+	"github.com/sibivishnu/Weather/common/const/device"
+	"github.com/sibivishnu/Weather/common/providers/weather_api"
 	"golang.org/x/net/context"
 	"log"
 	"os"
@@ -28,9 +29,9 @@ import (
 // Exports
 //----------------------------------------------
 
-//----------------------------------------------
+// ----------------------------------------------
 // Local Funcs
-//----------------------------------------------
+// ----------------------------------------------
 func copyFile() {
 	if scpServerHost == "" {
 		log.Printf("NO SCP Settings Provided, Bypassing SCP Remote File Step.")
@@ -53,7 +54,6 @@ func copyFile() {
 func runForecastUpdater() {
 	log.Printf("forecast runing")
 	locationListMap, _ := common.RedisInstance.QueryCache("activelocations*")
-
 
 	for locKey, locVal := range locationListMap {
 		keyArr := strings.Split(locKey, ":")
@@ -174,9 +174,9 @@ func listenGeo() {
 	}
 
 	/*
-	log.Println(projectID)
-	log.Println(subscriptionName)
-	log.Println(topicName)
+		log.Println(projectID)
+		log.Println(subscriptionName)
+		log.Println(topicName)
 	*/
 
 	sub := client.Subscription(subscriptionName)
@@ -195,7 +195,7 @@ func listenGeo() {
 	if !ok {
 		log.Println("[Listen] Geo: Subscription does not exist. Creating one")
 		sub, err = client.CreateSubscription(common.CTX, subscriptionName, pubsub.SubscriptionConfig{Topic: topic})
-		if (err != nil) {
+		if err != nil {
 			log.Printf("[Listen] Geo: Exception %v", err)
 			panic(err)
 		}
@@ -263,7 +263,7 @@ func listenAttr() {
 	if !ok {
 		log.Println("[Listen] Attribute: Subscription does not exist. Creating one")
 		sub, err = client.CreateSubscription(common.CTX, attributeSubscription, pubsub.SubscriptionConfig{Topic: topic})
-		if (err != nil) {
+		if err != nil {
 			log.Printf("[Listen] Attribute: failed to create sub %v", err)
 			panic(err)
 		}

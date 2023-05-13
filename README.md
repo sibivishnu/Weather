@@ -110,14 +110,14 @@ go build -ldflags '-X main.BUILD=wip' -o ./webapp/tmp/webapp ./webapp/*.go
 
 ### compile and run application (cacheUpdater)
 export GOPATH=$(pwd)/_vendor
-go build -ldflags '-X main.BUILD=wip' -o ./cacheUpdater/tmp/cacheUpdater ./cacheUpdater/*.go
-./cacheUpdater/tmp/cacheUpdater    
+<!-- go build -ldflags '-X main.BUILD=wip' -o ./cacheUpdater/tmp/cacheUpdater ./cacheUpdater/*.go sibi -->
+<!-- ./cacheUpdater/tmp/cacheUpdater     sibi-->
 
 
 ### One Liners 
 export GOPATH=$(pwd)/_vendor
 #### Build and Run CacheUpdate
-cd $GOPATH/../ && go build -ldflags '-X main.BUILD=wip' -o ./cacheUpdater/tmp/cacheUpdater ./cacheUpdater/*.go && cd cacheUpdater/tmp/ && ./cacheUpdater
+<!-- cd $GOPATH/../ && go build -ldflags '-X main.BUILD=wip' -o ./cacheUpdater/tmp/cacheUpdater ./cacheUpdater/*.go && cd cacheUpdater/tmp/ && ./cacheUpdater sibi -->
 #### Build and Run webapp
 cd $GOPATH/../ && go build -ldflags '-X main.BUILD=wip' -o ./webapp/tmp/webapp ./webapp/*.go && ./webapp/tmp/webapp
 
